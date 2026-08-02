@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  # ─── PostgreSQL (primary database) ──────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: buildmora_postgres
+    environment:
+      POSTGRES_USER: buildmora
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: buildmora_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - buildmora_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U buildmora -d buildmora_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ─── pgAdmin (optional DB UI) ────────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: buildmora_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@buildmora.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - dev-tools # Only start with: docker compose --profile dev-tools up
+    restart: unless-stopped
+
+volumes:
+  buildmora_postgres_data:
+    name: buildmora_postgres_data

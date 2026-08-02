@@ -1,0 +1,803 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum TenantRole {
+  OWNER
+  ADMIN
+  COLLABORATOR
+  VIEWER
+}
+
+enum PlanType {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+  ARCHIVED
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  REVIEW
+  DONE
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EnquirySource {
+  PROJECT
+  OPEN_SOURCE
+  BLOG
+  SERVICE
+  COLLABORATION
+}
+
+enum EnquiryStatus {
+  NEW
+  READ
+  REPLIED
+  RESOLVED
+  ARCHIVED
+}
+
+enum RecurringPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum SubStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  TRIALING
+}
+
+enum SupportStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum OtpPurpose {
+  LOGIN
+  EMAIL_VERIFY
+  PASSWORD_RESET
+  MFA_SETUP
+}
+
+enum EventType {
+  PAGE_VIEW
+  PROJECT_VIEW
+  BLOG_VIEW
+  SERVICE_VIEW
+  OS_PROJECT_VIEW
+  FORM_SUBMIT
+  ENQUIRY_SUBMIT
+  CONTACT_SUBMIT
+  REVIEW_SUBMIT
+}
+
+enum MfaMethod {
+  TOTP
+  EMAIL_OTP
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTH.JS REQUIRED MODELS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CORE USER & TENANT
+// ─────────────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String?
+  emailVerified DateTime?
+  image         String?
+
+  // MFA
+  mfaEnabled    Boolean   @default(false)
+  mfaMethod     MfaMethod @default(EMAIL_OTP)
+  mfaSecret     String?   // AES-encrypted TOTP secret
+
+  // Status
+  isActive      Boolean   @default(true)
+  isSuperAdmin  Boolean   @default(false)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Auth.js relations
+  accounts      Account[]
+  sessions      Session[]
+
+  // App relations
+  tenant        Tenant?          // owns one tenant (as OWNER)
+  tenantRoles   TenantUserRole[] // roles in other tenants
+  expenses      Expense[]
+  budget        Budget?
+  emailOtps     EmailOtp[]
+  auditLogs     AuditLog[]
+  supportRequests SupportRequest[]
+}
+
+model Tenant {
+  id      String @id @default(cuid())
+  ownerId String @unique
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  // Identity
+  siteName   String
+  siteSlug   String  @unique // {siteSlug}.buildmora.com
+  tagline    String?
+  footerText String?
+
+  // URLs
+  siteUrl            String?
+  customDomain       String?  @unique
+  customDomainVerified    Boolean  @default(false)
+  customDomainVerifiedAt  DateTime?
+
+  // SEO Defaults
+  seoDescription String?
+  metaKeywords   String?
+  ogImage        String? // S3 key
+
+  // Appearance
+  themeConfig Json?   // { primaryColor, font, layout, darkMode }
+  logo        String? // S3 key
+  favicon     String? // S3 key
+
+  // Analytics
+  gaMeasurementId String? // GA4 Measurement ID
+
+  // Status & Plan
+  isActive      Boolean  @default(true)
+  plan          PlanType @default(FREE)
+  planExpiresAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userRoles          TenantUserRole[]
+  profile            Profile?
+  projects           Project[]
+  openSourceProjects OpenSourceProject[]
+  blogPosts          BlogPost[]
+  services           Service[]
+  reviews            Review[]
+  enquiries          Enquiry[]
+  contacts           Contact[]
+  pageOgSettings     PageOgSetting[]
+  subscription       Subscription?
+  aiCreditLedgers    AiCreditLedger[]
+  analyticsEvents    AnalyticsEvent[]
+  supportRequests    SupportRequest[]
+}
+
+model TenantUserRole {
+  id       String     @id @default(cuid())
+  userId   String
+  tenantId String
+  role     TenantRole
+
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MFA & OTP
+// ─────────────────────────────────────────────────────────────────────────────
+
+model EmailOtp {
+  id        String     @id @default(cuid())
+  userId    String
+  codeHash  String
+  purpose   OtpPurpose
+  expiresAt DateTime
+  used      Boolean    @default(false)
+  createdAt DateTime   @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PROFILE
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Profile {
+  id       String @id @default(cuid())
+  tenantId String @unique
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  displayName  String?
+  bio          String? @db.Text
+  avatar       String? // S3 key
+  coverImage   String? // S3 key
+  headline     String?
+  location     String?
+  website      String?
+  email        String? // public contact email
+  phone        String?
+
+  // JSON arrays (typed in application layer with Zod)
+  skills         Json? // string[]
+  education      Json? // { institution, degree, year, desc }[]
+  experience     Json? // { company, role, duration, desc }[]
+  certifications Json? // { name, issuer, year, url }[]
+
+  // Social Links
+  github    String?
+  linkedin  String?
+  twitter   String?
+  instagram String?
+  youtube   String?
+  socialLinks Json? // { label, url }[]
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PAGE OG SETTINGS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model PageOgSetting {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  pageName       String // "home" | "projects" | "blog" | "services" | "about"
+  ogTitle        String?
+  ogDescription  String?
+  ogImage        String? // S3 key
+  metaKeywords   String?
+
+  @@unique([tenantId, pageName])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PROJECTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Project {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  title       String
+  slug        String
+  category    String
+  status      ProjectStatus @default(IN_PROGRESS)
+  startDate   DateTime?
+  description String?       @db.Text // TipTap HTML
+
+  // Links
+  liveLink    String?
+  githubLink  String?
+  customLinks Json? // { label, url }[]
+
+  // Metadata
+  starsRating  Int?    // 1-5
+  techStack    String[] // postgres string array
+  contributors Json?   // { name, githubUrl }[]
+  images       String[] // S3 keys
+  
+  // OG / SEO
+  ogImage        String?
+  ogTitle        String?
+  ogDescription  String?
+  metaKeywords   String?
+
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  viewCount   Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enquiries Enquiry[]
+  reviews   Review[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, isPublished])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OPEN SOURCE PROJECTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model OpenSourceProject {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  title             String
+  slug              String
+  category          String
+  status            ProjectStatus @default(IN_PROGRESS)
+  githubLink        String
+  documentationLink String?
+
+  // Sections (TipTap HTML)
+  overview                  String? @db.Text
+  problemStatement          String? @db.Text
+  features                  String? @db.Text
+  installationGuide         String? @db.Text
+  contributionGuidelines    String? @db.Text
+  roadmap                   String? @db.Text
+  customContribInstructions String? @db.Text
+
+  // Metadata
+  techStack      String[]
+  skillsRequired String[]
+  images         String[] // S3 keys
+  customLinks    Json?    // { label, url }[]
+
+  // OG / SEO
+  ogImage       String?
+  ogTitle       String?
+  ogDescription String?
+  metaKeywords  String?
+
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  viewCount   Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contributors OSContributor[]
+  tasks        ContributorTask[]
+  enquiries    Enquiry[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, isPublished])
+}
+
+model OSContributor {
+  id        String @id @default(cuid())
+  projectId String
+  tenantId  String
+
+  name      String
+  githubUrl String?
+  role      String?
+  avatarUrl String?
+  bio       String?
+
+  createdAt DateTime @default(now())
+
+  project OpenSourceProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   ContributorTask[]
+}
+
+model ContributorTask {
+  id            String  @id @default(cuid())
+  projectId     String
+  contributorId String?
+  tenantId      String
+
+  title       String
+  description String?    @db.Text
+  status      TaskStatus @default(OPEN)
+  priority    Priority   @default(MEDIUM)
+  dueDate     DateTime?
+  labels      String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project     OpenSourceProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  contributor OSContributor?    @relation(fields: [contributorId], references: [id], onDelete: SetNull)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BLOG
+// ─────────────────────────────────────────────────────────────────────────────
+
+model BlogPost {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  title       String
+  slug        String
+  authorId    String  // User.id
+  authorName  String? // denormalized for display
+  category    String?
+  status      PostStatus @default(DRAFT)
+  publishedAt DateTime?
+  scheduledAt DateTime?
+  readingTime Int?       // minutes
+
+  excerpt       String?
+  tags          String[]
+  content       String? @db.Text // TipTap HTML
+  featuredImage String? // S3 key
+
+  // OG / SEO
+  ogImage        String?
+  seoTitle       String?
+  seoDescription String?
+  metaKeywords   String?
+
+  viewCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enquiries Enquiry[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, status])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SERVICES
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Service {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  title       String
+  slug        String
+  description String? @db.Text
+  price       Decimal? @db.Decimal(10, 2)
+  currency    String   @default("INR")
+  image       String?  // S3 key
+  isPublished Boolean  @default(false)
+  customLinks Json?    // { label, url }[]
+
+  // OG / SEO
+  ogImage        String?
+  seoTitle       String?
+  seoDescription String?
+  metaKeywords   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enquiries Enquiry[]
+  reviews   Review[]
+
+  @@unique([tenantId, slug])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REVIEWS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Review {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  projectId String?
+  serviceId String?
+
+  reviewerName  String
+  reviewerEmail String?
+  rating        Int         // 1-5
+  content       String?     @db.Text
+  status        ReviewStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  service Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ENQUIRIES & CONTACTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Enquiry {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name    String
+  email   String
+  message String        @db.Text
+  phone   String?
+  source  EnquirySource
+  status  EnquiryStatus @default(NEW)
+
+  // References to source entity
+  projectId String?
+  osProjectId String?
+  blogId    String?
+  serviceId String?
+
+  project   Project?           @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  osProject OpenSourceProject? @relation(fields: [osProjectId], references: [id], onDelete: SetNull)
+  blog      BlogPost?          @relation(fields: [blogId], references: [id], onDelete: SetNull)
+  service   Service?           @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, status])
+  @@index([tenantId, source])
+}
+
+model Contact {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name    String
+  email   String
+  subject String?
+  message String        @db.Text
+  status  EnquiryStatus @default(NEW)
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, status])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPENSE TRACKER
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Expense {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title           String
+  amount          Decimal         @db.Decimal(10, 2)
+  currency        String          @default("INR")
+  category        String
+  date            DateTime
+  description     String?
+  isRecurring     Boolean         @default(false)
+  recurringPeriod RecurringPeriod?
+  tags            String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, date])
+  @@index([userId, category])
+}
+
+model Budget {
+  id            String  @id @default(cuid())
+  userId        String  @unique
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  monthlyBudget Decimal @db.Decimal(10, 2)
+  categoryBudgets Json? // { [category: string]: number }
+  currency      String  @default("INR")
+
+  updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI CREDITS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AiCreditLedger {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  month     String // "2026-07" — YYYY-MM format
+  used      Int    @default(0)
+  limit     Int    // -1 = unlimited (Enterprise)
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, month])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SUBSCRIPTIONS & PAYMENTS (Razorpay)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Subscription {
+  id       String @id @default(cuid())
+  tenantId String @unique
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  razorpaySubId      String?  @unique
+  razorpayCustomerId String?
+  plan               PlanType
+  status             SubStatus @default(ACTIVE)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentLog {
+  id       String @id @default(cuid())
+  tenantId String
+
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  amount            Decimal @db.Decimal(10, 2)
+  currency          String  @default("INR")
+  status            String  // "captured" | "failed" | "refunded"
+  description       String?
+  metadata          Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ANALYTICS EVENTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AnalyticsEvent {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  type     EventType
+  entityId String?   // projectId, blogId, serviceId, etc.
+  path     String?
+  referrer String?
+  country  String?
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, type, createdAt])
+  @@index([tenantId, createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUDIT LOGS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id       String  @id @default(cuid())
+  userId   String?
+  tenantId String?
+
+  action    String  // e.g. "project.created", "user.disabled", "blog.published"
+  entity    String? // "Project" | "BlogPost" | "User" etc.
+  entityId  String?
+  oldValue  Json?
+  newValue  Json?
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([tenantId])
+  @@index([action, createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SUPPORT REQUESTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+model SupportRequest {
+  id       String  @id @default(cuid())
+  tenantId String?
+  userId   String?
+  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  user     User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  name       String
+  email      String
+  subject    String
+  message    String        @db.Text
+  status     SupportStatus @default(OPEN)
+  priority   Priority      @default(MEDIUM)
+  adminNotes String?       @db.Text
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, priority])
+}
