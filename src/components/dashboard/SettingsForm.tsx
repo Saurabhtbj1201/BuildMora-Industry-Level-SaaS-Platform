@@ -15,13 +15,15 @@ interface SettingsFormProps {
     siteSlug: string;
     tagline?: string;
     footerText?: string;
-    contactEmail?: string;
-    defaultOgTitle?: string;
-    defaultOgDescription?: string;
-    defaultOgImage?: string;
+    // SEO
+    seoDescription?: string;
+    metaKeywords?: string;
+    ogImage?: string;
+    // Analytics
     gaMeasurementId?: string;
+    // Domain
     customDomain?: string;
-    customDomainStatus?: string;
+    customDomainVerified?: boolean;
   };
 }
 
@@ -33,21 +35,20 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Form State
+  // General
   const [siteName, setSiteName] = useState(initialSettings.siteName ?? "");
   const [tagline, setTagline] = useState(initialSettings.tagline ?? "");
   const [footerText, setFooterText] = useState(initialSettings.footerText ?? "");
-  const [contactEmail, setContactEmail] = useState(initialSettings.contactEmail ?? "");
 
-  // SEO State
-  const [defaultOgTitle, setDefaultOgTitle] = useState(initialSettings.defaultOgTitle ?? "");
-  const [defaultOgDescription, setDefaultOgDescription] = useState(initialSettings.defaultOgDescription ?? "");
-  const [defaultOgImage, setDefaultOgImage] = useState(initialSettings.defaultOgImage ?? "");
+  // SEO
+  const [seoDescription, setSeoDescription] = useState(initialSettings.seoDescription ?? "");
+  const [metaKeywords, setMetaKeywords] = useState(initialSettings.metaKeywords ?? "");
+  const [ogImage, setOgImage] = useState(initialSettings.ogImage ?? "");
 
-  // Analytics State
+  // Analytics
   const [gaMeasurementId, setGaMeasurementId] = useState(initialSettings.gaMeasurementId ?? "");
 
-  // Domain State
+  // Domain
   const [customDomain, setCustomDomain] = useState(initialSettings.customDomain ?? "");
 
   const handleCopyCname = () => {
@@ -66,10 +67,9 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
       siteName,
       tagline,
       footerText,
-      contactEmail,
-      defaultOgTitle,
-      defaultOgDescription,
-      defaultOgImage,
+      seoDescription,
+      metaKeywords,
+      ogImage: ogImage || null,
       gaMeasurementId,
       customDomain: customDomain ? customDomain.toLowerCase().trim() : null,
     };
@@ -88,8 +88,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
 
       setMessage("Settings updated successfully!");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -130,17 +130,17 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
       {/* Tabs */}
       <div className="flex border-b border-border gap-2">
         {[
-          { id: "general", label: "General", icon: Settings },
-          { id: "seo", label: "SEO & OpenGraph", icon: Shield },
+          { id: "general",   label: "General",        icon: Settings  },
+          { id: "seo",       label: "SEO & OpenGraph", icon: Shield    },
           { id: "analytics", label: "Analytics (GA4)", icon: BarChart3 },
-          { id: "domain", label: "Custom Domain", icon: Globe },
+          { id: "domain",    label: "Custom Domain",   icon: Globe     },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               type="button"
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
                 activeTab === tab.id
                   ? "border-primary text-primary font-semibold"
@@ -154,7 +154,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         })}
       </div>
 
-      {/* Tab 1: General Settings */}
+      {/* Tab 1: General */}
       {activeTab === "general" && (
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div>
@@ -182,18 +182,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
 
           <div>
             <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1">
-              Public Contact Email
-            </label>
-            <Input
-              type="email"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
-              placeholder="contact@yourdomain.com"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1">
               Footer Text
             </label>
             <Input
@@ -205,47 +193,51 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         </div>
       )}
 
-      {/* Tab 2: SEO Settings */}
+      {/* Tab 2: SEO */}
       {activeTab === "seo" && (
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div>
             <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1">
-              Default OpenGraph Title
-            </label>
-            <Input
-              value={defaultOgTitle}
-              onChange={(e) => setDefaultOgTitle(e.target.value)}
-              placeholder="Saurabh Kumar — Full Stack Engineer Portfolio"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1">
-              Default Meta Description
+              Site Meta Description
             </label>
             <textarea
-              value={defaultOgDescription}
-              onChange={(e) => setDefaultOgDescription(e.target.value)}
+              value={seoDescription}
+              onChange={(e) => setSeoDescription(e.target.value)}
               rows={3}
               placeholder="Discover projects, technical blogs, open source contributions, and software engineering services."
               className="w-full rounded-md border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
+            <p className="text-xs text-muted-foreground mt-1">Shown in search engine results. Aim for 120–160 characters.</p>
           </div>
 
           <div>
             <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1">
-              Default OpenGraph Social Image URL
+              Meta Keywords <span className="font-normal text-muted-foreground">(comma-separated)</span>
             </label>
             <Input
-              value={defaultOgImage}
-              onChange={(e) => setDefaultOgImage(e.target.value)}
+              value={metaKeywords}
+              onChange={(e) => setMetaKeywords(e.target.value)}
+              placeholder="portfolio, fullstack developer, react, nextjs"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1">
+              Default OpenGraph / Social Share Image URL
+            </label>
+            <Input
+              value={ogImage}
+              onChange={(e) => setOgImage(e.target.value)}
               placeholder="https://buildmora-assets.s3.amazonaws.com/og-default.png"
             />
+            {ogImage && (
+              <img src={ogImage} alt="OG preview" className="mt-2 rounded-lg border border-border h-28 object-cover" />
+            )}
           </div>
         </div>
       )}
 
-      {/* Tab 3: Analytics Settings */}
+      {/* Tab 3: Analytics */}
       {activeTab === "analytics" && (
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-3 p-3 bg-primary/10 border border-primary/20 rounded-lg text-xs text-foreground">
@@ -272,12 +264,12 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         </div>
       )}
 
-      {/* Tab 4: Custom Domain Settings */}
+      {/* Tab 4: Custom Domain */}
       {activeTab === "domain" && (
         <div className="bg-card border border-border rounded-xl p-6 space-y-6">
           <div className="space-y-1">
             <h3 className="text-base font-bold font-display text-foreground">
-              Tenant Domain &amp; SSL Configuration
+              Tenant Domain & SSL Configuration
             </h3>
             <p className="text-xs text-muted-foreground">
               Every portfolio receives a free subdomain at{" "}
@@ -285,7 +277,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
             </p>
           </div>
 
-          {/* Subdomain default indicator */}
+          {/* Default subdomain */}
           <div className="p-4 bg-muted/30 border border-border rounded-xl flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-muted-foreground">Default Subdomain</p>
@@ -298,30 +290,34 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
             </span>
           </div>
 
-          {/* Custom Domain Input */}
+          {/* Custom domain */}
           <div className="space-y-3 pt-2">
-            <label className="text-xs font-semibold text-foreground uppercase tracking-wider block">
-              Custom Domain (Pro &amp; Enterprise Feature)
-            </label>
-            <div className="flex gap-2">
-              <Input
-                value={customDomain}
-                onChange={(e) => setCustomDomain(e.target.value)}
-                placeholder="e.g. portfolio.yourname.com"
-                className="font-mono text-sm"
-              />
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider block">
+                Custom Domain <span className="text-muted-foreground font-normal">(Pro & Enterprise)</span>
+              </label>
+              {initialSettings.customDomainVerified && (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success/10 text-success flex items-center gap-1">
+                  <Check className="w-3 h-3" /> Verified
+                </span>
+              )}
             </div>
+            <Input
+              value={customDomain}
+              onChange={(e) => setCustomDomain(e.target.value)}
+              placeholder="e.g. portfolio.yourname.com"
+              className="font-mono text-sm"
+            />
           </div>
 
-          {/* DNS Configuration Instructions */}
+          {/* DNS instructions */}
           <div className="p-4 bg-muted/40 border border-border rounded-xl space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
               DNS Configuration Instructions
             </h4>
             <p className="text-xs text-muted-foreground">
-              To point your custom domain to BuildMora, add a <strong>CNAME</strong> record in your domain registrar (GoDaddy, Namecheap, Cloudflare, etc.):
+              Add a <strong>CNAME</strong> record in your domain registrar (GoDaddy, Namecheap, Cloudflare, etc.):
             </p>
-
             <div className="bg-background border border-border rounded-lg p-3 flex items-center justify-between font-mono text-xs">
               <div>
                 <span className="text-muted-foreground mr-4">Type: CNAME</span>

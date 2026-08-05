@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { DashboardTopbar } from "@/components/layout/DashboardTopbar";
+import { AuthSessionProvider } from "@/components/providers/AuthSessionProvider";
 
 export default async function DashboardLayout({
   children,
@@ -37,21 +38,25 @@ export default async function DashboardLayout({
     : { used: 0, limit: 10 };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* Sidebar */}
-      <DashboardSidebar
-        tenantSlug={tenant.siteSlug}
-        siteName={tenant.siteName}
-        aiCredits={aiCredits}
-      />
+    // Pass the server-fetched session so DashboardTopbar's useSession()
+    // works without a client-side refetch or missing SessionProvider.
+    <AuthSessionProvider session={session}>
+      <div className="flex h-screen bg-background overflow-hidden">
+        {/* Sidebar */}
+        <DashboardSidebar
+          tenantSlug={tenant.siteSlug}
+          siteName={tenant.siteName}
+          aiCredits={aiCredits}
+        />
 
-      {/* Main content area */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <DashboardTopbar />
-        <main className="flex-1 overflow-y-auto bg-surface">
-          <div className="page-transition">{children}</div>
-        </main>
+        {/* Main content area */}
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          <DashboardTopbar />
+          <main className="flex-1 overflow-y-auto bg-surface">
+            <div className="page-transition">{children}</div>
+          </main>
+        </div>
       </div>
-    </div>
+    </AuthSessionProvider>
   );
 }

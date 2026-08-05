@@ -14,13 +14,12 @@ export const GET = withErrorHandler(async (_req: NextRequest) => {
       siteSlug: true,
       tagline: true,
       footerText: true,
-      contactEmail: true,
-      defaultOgTitle: true,
-      defaultOgDescription: true,
-      defaultOgImage: true,
+      seoDescription: true,
+      metaKeywords: true,
+      ogImage: true,
       gaMeasurementId: true,
       customDomain: true,
-      customDomainStatus: true,
+      customDomainVerified: true,
     },
   });
 
@@ -51,16 +50,20 @@ export const PUT = withErrorHandler(async (req: NextRequest) => {
     where: { id: tenantId },
     data: {
       siteName: body.siteName,
-      tagline: body.tagline,
-      footerText: body.footerText,
-      contactEmail: body.contactEmail,
-      defaultOgTitle: body.defaultOgTitle,
-      defaultOgDescription: body.defaultOgDescription,
-      defaultOgImage: body.defaultOgImage,
-      gaMeasurementId: body.gaMeasurementId,
+      tagline: body.tagline || null,
+      footerText: body.footerText || null,
+      seoDescription: body.seoDescription || null,
+      metaKeywords: body.metaKeywords || null,
+      ogImage: body.ogImage || null,
+      gaMeasurementId: body.gaMeasurementId || null,
       customDomain: body.customDomain || null,
+      // Reset verification when domain changes
+      ...(body.customDomain !== undefined && {
+        customDomainVerified: false,
+        customDomainVerifiedAt: null,
+      }),
     },
   });
 
-  return ok(updatedTenant);
+  return ok({ success: true, tenant: updatedTenant });
 });

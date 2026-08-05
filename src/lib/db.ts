@@ -13,6 +13,7 @@ function createPrismaClient() {
     max: process.env.NODE_ENV === "production" ? 10 : 3,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
+    ssl: { rejectUnauthorized: true }, // explicit verify-full — suppresses pg SSL deprecation warning
   });
 
   const adapter = new PrismaPg(pool);

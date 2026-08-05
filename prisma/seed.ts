@@ -182,7 +182,7 @@ async function main() {
       });
 
       console.log(`✅ Demo user created: ${demoEmail}`);
-      console.log(`   Demo password: Demo@1234`);
+      console.log(`   Demo password: Demo@1234!`);
       console.log(`   Demo site: http://demo.localhost:3000\n`);
     } else {
       console.log(`ℹ️  Demo user already exists: ${demoEmail}\n`);

@@ -34,7 +34,10 @@ export default async function proxy(req: NextRequest) {
       return NextResponse.redirect(new URL("/404", `https://${APP_DOMAIN}`));
     }
 
-    const response = NextResponse.next();
+    // Rewrite to /site prefix so tenant pages don't conflict with marketing pages
+    const rewriteUrl = new URL(`/site${pathname === "/" ? "" : pathname}`, req.url);
+    rewriteUrl.search = req.nextUrl.search;
+    const response = NextResponse.rewrite(rewriteUrl);
     response.headers.set("x-tenant-id", tenant.tenantId);
     response.headers.set("x-tenant-slug", tenant.slug);
     return response;
