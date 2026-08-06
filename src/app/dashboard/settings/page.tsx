@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 import { SettingsForm } from "@/components/dashboard/SettingsForm";
 
@@ -28,6 +29,13 @@ export default async function SettingsDashboardPage() {
 
   if (!tenant) redirect("/onboarding");
 
+  // Derive the tenant's public URL from the current request host,
+  // so it works in dev (localhost:3000) and production (buildmora.com).
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "localhost:3000";
+  const proto = host.includes("localhost") ? "http" : "https";
+  const publicSiteUrl = `${proto}://${tenant.siteSlug}.${host}`;
+
   return (
     <div className="p-6">
       <SettingsForm
@@ -43,6 +51,7 @@ export default async function SettingsDashboardPage() {
           customDomain: tenant.customDomain ?? undefined,
           customDomainVerified: tenant.customDomainVerified,
         }}
+        publicSiteUrl={publicSiteUrl}
       />
     </div>
   );

@@ -241,6 +241,7 @@ export default function LoginPage() {
                   disabled={isLoading}
                   placeholder="you@example.com"
                   className="w-full pl-10 pr-4 py-3 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all disabled:opacity-50"
+                  suppressHydrationWarning
                 />
               </div>
             </div>
@@ -274,6 +275,7 @@ export default function LoginPage() {
                   disabled={isLoading}
                   placeholder="••••••••"
                   className="w-full pl-10 pr-12 py-3 bg-background border border-input rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all disabled:opacity-50"
+                  suppressHydrationWarning
                 />
                 <button
                   type="button"
@@ -297,6 +299,7 @@ export default function LoginPage() {
               type="submit"
               disabled={isLoading}
               className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 py-3 rounded-xl text-sm font-semibold transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-glow-brand hover:shadow-none group mt-2"
+              suppressHydrationWarning
             >
               {isPending ? (
                 <>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Globe, Shield, BarChart3, Settings, Check, Loader2,
-  Copy, Info,
+  Copy, Info, ExternalLink,
 } from "lucide-react";
 
 interface SettingsFormProps {
@@ -25,9 +25,10 @@ interface SettingsFormProps {
     customDomain?: string;
     customDomainVerified?: boolean;
   };
+  publicSiteUrl: string;
 }
 
-export function SettingsForm({ initialSettings }: SettingsFormProps) {
+export function SettingsForm({ initialSettings, publicSiteUrl }: SettingsFormProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"general" | "seo" | "analytics" | "domain">("general");
   const [loading, setLoading] = useState(false);
@@ -272,22 +273,31 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
               Tenant Domain & SSL Configuration
             </h3>
             <p className="text-xs text-muted-foreground">
-              Every portfolio receives a free subdomain at{" "}
-              <code className="text-primary font-mono">{initialSettings.siteSlug}.buildmora.com</code>.
+              Every portfolio receives a free subdomain automatically.
             </p>
           </div>
 
-          {/* Default subdomain */}
-          <div className="p-4 bg-muted/30 border border-border rounded-xl flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium text-muted-foreground">Default Subdomain</p>
-              <p className="text-sm font-bold font-mono text-foreground">
-                https://{initialSettings.siteSlug}.buildmora.com
-              </p>
+          {/* Default subdomain — derived from current host */}
+          <div className="p-4 bg-muted/30 border border-border rounded-xl">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-muted-foreground mb-1">Default Subdomain</p>
+                <p className="text-sm font-bold font-mono text-foreground break-all">
+                  {publicSiteUrl}
+                </p>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success/10 text-success flex items-center gap-1 shrink-0">
+                <Check className="w-3 h-3" /> Active SSL
+              </span>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success/10 text-success flex items-center gap-1">
-              <Check className="w-3 h-3" /> Active SSL
-            </span>
+            <a
+              href={publicSiteUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"
+            >
+              <ExternalLink className="w-3 h-3" /> View Public Site
+            </a>
           </div>
 
           {/* Custom domain */}

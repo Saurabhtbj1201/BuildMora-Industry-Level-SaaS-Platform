@@ -30,7 +30,7 @@ async function main() {
   });
 
   if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash("Admin@BuildMora2026!", 12);
+    const passwordHash = await bcrypt.hash("Admin@123", 12);
 
     const superAdmin = await prisma.user.create({
       data: {
