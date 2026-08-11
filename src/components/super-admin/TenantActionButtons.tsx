@@ -33,12 +33,7 @@ export default function TenantActionButtons({ tenantId, currentPlan, isActive }:
     router.refresh();
   }
 
-  const PLAN_COLOR: Record<Plan, string> = {
-    FREE: "bg-slate-700 text-slate-300",
-    STARTER: "bg-blue-700 text-blue-100",
-    PRO: "bg-violet-700 text-violet-100",
-    ENTERPRISE: "bg-amber-700 text-amber-100",
-  };
+
 
   return (
     <div className="flex flex-wrap gap-2">

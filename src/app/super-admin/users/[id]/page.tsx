@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  ArrowLeft, User, Building2, Zap, Activity,
-  ShieldAlert, CheckCircle2, XCircle, Mail, Globe,
+  ArrowLeft, Building2, Zap, Activity,
+  ShieldAlert, CheckCircle2, XCircle, Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserActionButtons from "@/components/super-admin/UserActionButtons";
@@ -48,7 +48,6 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
   if (!user) notFound();
 
   const isSelf = session.user?.id === id;
-  const currentMonthLedger = user.tenant?.aiCreditLedgers[0];
 
   return (
     <div className="p-6 space-y-6 min-h-full max-w-5xl">

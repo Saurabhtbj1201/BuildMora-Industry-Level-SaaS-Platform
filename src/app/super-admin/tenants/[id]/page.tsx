@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Building2, User, Zap, BarChart3, Globe, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, User, Zap, BarChart3, Globe, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TenantActionButtons from "@/components/super-admin/TenantActionButtons";
 
@@ -35,6 +35,8 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
   if (!tenant) notFound();
 
+  const subRecord = tenant.subscription as unknown as Record<string, string | null> | null;
+
   return (
     <div className="p-6 space-y-6 min-h-full max-w-5xl">
       <Link href="/super-admin/tenants"
@@ -46,7 +48,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
       <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-blue-500/20 shrink-0">
-            {tenant.siteName[0].toUpperCase()}
+            {(tenant.siteName[0] ?? "T").toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -151,13 +153,13 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Subscription */}
-      {tenant.subscription && (
+      {subRecord && (
         <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-5 space-y-3">
           <h2 className="text-sm font-bold text-white font-display">Subscription</h2>
           <div className="grid grid-cols-2 gap-3 text-sm">
             {[
-              { label: "Status", value: (tenant.subscription as Record<string, string>).status },
-              { label: "Razorpay Sub ID", value: (tenant.subscription as Record<string, string>).razorpaySubscriptionId ?? "—", mono: true },
+              { label: "Status", value: subRecord.status ?? "—" },
+              { label: "Razorpay Sub ID", value: subRecord.razorpaySubId ?? subRecord.razorpaySubscriptionId ?? "—", mono: true },
             ].map(({ label, value, mono }) => (
               <div key={label} className="bg-white/[0.03] rounded-xl p-3">
                 <p className="text-slate-500 text-xs mb-1">{label}</p>

@@ -2,7 +2,7 @@ import { requireSuperAdmin } from "@/lib/superAdmin";
 import { prisma } from "@/lib/db";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LifeBuoy, Search } from "lucide-react";
+import { LifeBuoy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SupportTicketCard from "@/components/super-admin/SupportTicketCard";
 
@@ -14,13 +14,6 @@ const STATUS_STYLE: Record<string, string> = {
   IN_PROGRESS: "bg-amber-500/20 text-amber-400 border-amber-500/20",
   RESOLVED:    "bg-emerald-500/20 text-emerald-400 border-emerald-500/20",
   CLOSED:      "bg-slate-700/60 text-slate-400 border-slate-600/40",
-};
-
-const PRIORITY_STYLE: Record<string, string> = {
-  CRITICAL: "bg-rose-600/30 text-rose-300 border-rose-600/30",
-  HIGH:     "bg-orange-500/20 text-orange-400 border-orange-500/20",
-  MEDIUM:   "bg-amber-500/20 text-amber-400 border-amber-500/20",
-  LOW:      "bg-slate-700/40 text-slate-400 border-slate-600/40",
 };
 
 export default async function SupportPage({
@@ -37,7 +30,7 @@ export default async function SupportPage({
 
   const where = {
     ...(status ? { status: status as "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED" } : {}),
-    ...(priority ? { priority: priority as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" } : {}),
+    ...(priority ? { priority: priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT" } : {}),
   };
 
   // Status counts for header badges
@@ -90,7 +83,7 @@ export default async function SupportPage({
         <select name="priority" defaultValue={priority}
           className="px-3 py-2.5 bg-[#0f1117] border border-white/10 rounded-xl text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500">
           <option value="">All Priorities</option>
-          {["CRITICAL","HIGH","MEDIUM","LOW"].map((p) => <option key={p} value={p}>{p}</option>)}
+          {["URGENT","HIGH","MEDIUM","LOW"].map((p) => <option key={p} value={p}>{p}</option>)}
         </select>
         <button type="submit" className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium rounded-xl transition-colors">Apply</button>
       </form>
@@ -112,7 +105,7 @@ export default async function SupportPage({
                 subject: ticket.subject,
                 message: ticket.message,
                 status: ticket.status as "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED",
-                priority: ticket.priority as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
+                priority: ticket.priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT",
                 adminNotes: ticket.adminNotes,
                 createdAt: ticket.createdAt.toISOString(),
                 user: ticket.user,

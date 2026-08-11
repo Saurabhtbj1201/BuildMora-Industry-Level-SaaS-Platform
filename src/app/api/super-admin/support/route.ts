@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   const where = {
     ...(status ? { status: status as "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED" } : {}),
-    ...(priority ? { priority: priority as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" } : {}),
+    ...(priority ? { priority: priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT" } : {}),
   };
 
   const [tickets, total] = await Promise.all([

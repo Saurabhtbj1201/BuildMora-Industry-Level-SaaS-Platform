@@ -6,7 +6,7 @@ import {
   ShieldAlert, ShieldX, Zap, Loader2, Check, AlertCircle,
   Crown, CheckCircle2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 
 interface SuperAdmin {
   id: string; name: string | null; email: string | null;

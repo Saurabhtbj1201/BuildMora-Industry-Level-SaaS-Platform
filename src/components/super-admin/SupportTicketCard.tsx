@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp, Loader2, Check, Mail, User } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Check, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Status = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
-type Priority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 interface Ticket {
   id: string;
@@ -29,10 +29,10 @@ const STATUS_STYLE: Record<Status, string> = {
 };
 
 const PRIORITY_DOT: Record<Priority, string> = {
-  CRITICAL: "bg-rose-500",
-  HIGH:     "bg-orange-500",
-  MEDIUM:   "bg-amber-400",
-  LOW:      "bg-slate-500",
+  URGENT: "bg-rose-500",
+  HIGH:   "bg-orange-500",
+  MEDIUM: "bg-amber-400",
+  LOW:    "bg-slate-500",
 };
 
 export default function SupportTicketCard({ ticket }: { ticket: Ticket }) {
@@ -85,7 +85,7 @@ export default function SupportTicketCard({ ticket }: { ticket: Ticket }) {
         </span>
 
         <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0",
-          priority === "CRITICAL" ? "bg-rose-500/20 text-rose-300 border-rose-500/20" :
+          priority === "URGENT" ? "bg-rose-500/20 text-rose-300 border-rose-500/20" :
           priority === "HIGH" ? "bg-orange-500/20 text-orange-300 border-orange-500/20" :
           priority === "MEDIUM" ? "bg-amber-500/20 text-amber-300 border-amber-500/20" :
           "bg-slate-700/60 text-slate-400 border-slate-600/30"
@@ -122,7 +122,7 @@ export default function SupportTicketCard({ ticket }: { ticket: Ticket }) {
               <label className="text-xs text-slate-500 block mb-1.5">Priority</label>
               <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)}
                 className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:ring-1 focus:ring-violet-500">
-                {(["CRITICAL","HIGH","MEDIUM","LOW"] as Priority[]).map((p) =>
+                {(["URGENT","HIGH","MEDIUM","LOW"] as Priority[]).map((p) =>
                   <option key={p} value={p}>{p}</option>
                 )}
               </select>

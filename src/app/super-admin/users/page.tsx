@@ -2,7 +2,7 @@ import { requireSuperAdmin } from "@/lib/superAdmin";
 import { prisma } from "@/lib/db";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Users, Search, ArrowUpRight, ShieldAlert, CheckCircle2, XCircle, ChevronRight } from "lucide-react";
+import { Users, Search, ShieldAlert, CheckCircle2, XCircle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 
