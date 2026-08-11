@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, Suspense } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -41,7 +41,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   default: "Something went wrong. Please try again.",
 };
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") ?? "/dashboard";
@@ -336,5 +336,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

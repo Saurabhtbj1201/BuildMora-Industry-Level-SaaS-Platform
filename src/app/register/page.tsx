@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, Suspense } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -33,7 +33,7 @@ function getPasswordStrength(pw: string): { score: number; label: string; color:
   return { score, label: labels[score] ?? "", color: colors[score] ?? "" };
 }
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
   const params = useSearchParams();
   const plan = params.get("plan") ?? "free";
@@ -371,5 +371,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" /></div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }
