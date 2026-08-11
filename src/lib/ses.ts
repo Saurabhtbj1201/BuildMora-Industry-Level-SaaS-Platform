@@ -3,7 +3,7 @@ import {
   SendEmailCommand,
   type SendEmailCommandInput,
 } from "@aws-sdk/client-ses";
-import { render } from "@react-email/components";
+import { render } from "@react-email/render";
 import type { ReactElement } from "react";
 
 const ses = new SESClient({

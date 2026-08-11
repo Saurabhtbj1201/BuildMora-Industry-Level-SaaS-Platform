@@ -32,7 +32,7 @@
     "@hookform/resolvers": "^5.5.7",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
-    "@react-email/components": "^1.0.12",
+    "@react-email/render": "^2.1.0",
     "@tiptap/extension-character-count": "^3.29.2",
     "@tiptap/extension-code-block-lowlight": "^3.29.2",
     "@tiptap/extension-color": "^3.29.2",
