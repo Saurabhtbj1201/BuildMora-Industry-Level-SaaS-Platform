@@ -4,6 +4,8 @@ import { ok, err, requireAuth, requireTenantAccess, withErrorHandler, parseBody 
 import { hasPermission } from "@/lib/rbac";
 import { aiGenerateSchema } from "@/lib/validators";
 
+export const dynamic = 'force-dynamic';
+
 // POST /api/ai/generate
 export const POST = withErrorHandler(async (req: NextRequest) => {
   const session = await requireAuth();

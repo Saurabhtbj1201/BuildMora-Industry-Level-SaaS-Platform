@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "New Project",
 };

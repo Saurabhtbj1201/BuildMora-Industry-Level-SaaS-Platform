@@ -11,6 +11,8 @@ import {
 import { subDays, startOfMonth, format } from "date-fns";
 import type { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Overview",
 };

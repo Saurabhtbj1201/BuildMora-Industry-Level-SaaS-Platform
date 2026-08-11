@@ -3,6 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Edit Project",
 };

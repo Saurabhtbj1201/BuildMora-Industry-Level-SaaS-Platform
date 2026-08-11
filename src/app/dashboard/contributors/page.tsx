@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import type { Metadata } from "next";
 import ContributorsClient from "@/components/dashboard/ContributorsClient";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "Contributors" };
 export const revalidate = 0;
 

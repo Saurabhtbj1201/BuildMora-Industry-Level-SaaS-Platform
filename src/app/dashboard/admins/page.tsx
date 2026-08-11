@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import type { Metadata } from "next";
 import AdminsClient from "@/components/dashboard/AdminsClient";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "Admins & Access" };
 export const revalidate = 0;
 

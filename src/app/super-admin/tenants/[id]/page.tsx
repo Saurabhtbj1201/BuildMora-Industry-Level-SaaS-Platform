@@ -7,6 +7,8 @@ import { ArrowLeft, User, Zap, BarChart3, Globe, CheckCircle2, XCircle } from "l
 import { cn } from "@/lib/utils";
 import TenantActionButtons from "@/components/super-admin/TenantActionButtons";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "Tenant Detail" };
 export const revalidate = 0;
 

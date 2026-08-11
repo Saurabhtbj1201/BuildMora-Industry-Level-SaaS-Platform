@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Settings } from "lucide-react";
 import AdminSettingsClient from "@/components/super-admin/AdminSettingsClient";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "Settings" };
 export const revalidate = 0;
 

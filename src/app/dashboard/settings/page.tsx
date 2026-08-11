@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 import { SettingsForm } from "@/components/dashboard/SettingsForm";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Site Settings" };
 export const revalidate = 0;
 

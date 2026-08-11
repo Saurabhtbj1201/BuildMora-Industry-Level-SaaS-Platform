@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { PersonalizationForm } from "@/components/dashboard/PersonalizationForm";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Personalization",
 };

@@ -7,6 +7,8 @@ import { ExternalLink, ArrowLeft, Tag } from "lucide-react";
 import { GithubIcon } from "@/components/icons/social";
 import EnquiryForm from "@/components/public/EnquiryForm";
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

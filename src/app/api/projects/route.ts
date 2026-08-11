@@ -7,6 +7,8 @@ import {
 import { hasPermission } from "@/lib/rbac";
 import { projectSchema } from "@/lib/validators";
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/projects — List all projects for the authenticated tenant
 export const GET = withErrorHandler(async (req: NextRequest) => {
   const session = await requireAuth();

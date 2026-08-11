@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
+export const dynamic = 'force-dynamic';
+
 const budgetSchema = z.object({
   monthlyBudget: z.number().positive(),
   currency: z.string().default("INR"),

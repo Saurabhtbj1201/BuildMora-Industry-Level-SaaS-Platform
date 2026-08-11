@@ -5,6 +5,8 @@ import { Metadata } from "next";
 import { Briefcase, ExternalLink } from "lucide-react";
 import { GithubIcon } from "@/components/icons/social";
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {

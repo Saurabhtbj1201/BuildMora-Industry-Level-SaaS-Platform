@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const updateSchema = z.object({
   status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
 });

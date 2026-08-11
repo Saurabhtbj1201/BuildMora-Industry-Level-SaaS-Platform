@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { Star } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {

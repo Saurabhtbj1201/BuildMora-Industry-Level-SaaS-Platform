@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Building2, Search, ChevronRight, CheckCircle2, XCircle, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "Tenants" };
 export const revalidate = 0;
 

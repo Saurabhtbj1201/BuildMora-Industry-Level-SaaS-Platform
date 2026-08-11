@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ScrollText, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "Audit Logs" };
 export const revalidate = 0;
 

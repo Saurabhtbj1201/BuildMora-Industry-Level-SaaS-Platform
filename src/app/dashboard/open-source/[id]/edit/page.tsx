@@ -3,6 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import OSProjectForm from "@/components/open-source/OSProjectForm";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Edit OS Project" };
 
 export default async function EditOSProjectPage({

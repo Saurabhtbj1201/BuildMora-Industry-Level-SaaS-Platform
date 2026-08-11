@@ -6,6 +6,8 @@ import { LifeBuoy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SupportTicketCard from "@/components/super-admin/SupportTicketCard";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "Support" };
 export const revalidate = 0;
 

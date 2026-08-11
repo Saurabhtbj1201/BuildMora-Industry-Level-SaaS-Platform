@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const updateSchema = z.object({ status: z.enum(["NEW", "READ", "REPLIED", "RESOLVED", "ARCHIVED"]) });
 
 async function getContact(userId: string, contactId: string) {

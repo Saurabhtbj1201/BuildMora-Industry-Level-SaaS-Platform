@@ -3,6 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import ServiceForm from "@/components/services/ServiceForm";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Edit Service" };
 
 export default async function EditServicePage({ params }: { params: Promise<{ id: string }> }) {

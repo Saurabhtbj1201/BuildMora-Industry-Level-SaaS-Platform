@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Users, Search, ShieldAlert, CheckCircle2, XCircle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 
 export const metadata: Metadata = { title: "Users" };
 export const revalidate = 0;

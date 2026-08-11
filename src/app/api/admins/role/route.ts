@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const schema = z.object({
   memberId: z.string(),
   role: z.enum(["ADMIN", "COLLABORATOR", "VIEWER"]),

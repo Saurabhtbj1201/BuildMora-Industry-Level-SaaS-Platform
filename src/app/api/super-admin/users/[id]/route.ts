@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSuperAdminSession } from "@/lib/superAdmin";
 import { prisma } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 async function getUser(id: string) {
   return prisma.user.findUnique({
     where: { id },

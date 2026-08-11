@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { ok, requireAuth, requireTenantAccess, withErrorHandler } from "@/lib/api";
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/profile
 export const GET = withErrorHandler(async (_req: NextRequest) => {
   const session = await requireAuth();

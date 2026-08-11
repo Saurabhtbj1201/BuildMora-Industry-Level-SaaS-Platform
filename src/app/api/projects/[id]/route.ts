@@ -7,6 +7,8 @@ import {
 import { hasPermission } from "@/lib/rbac";
 import { projectSchema } from "@/lib/validators";
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/projects/[id] — Fetch single project
 export const GET = withErrorHandler(async (_req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;

@@ -10,6 +10,8 @@ import {
 import { cn } from "@/lib/utils";
 import UserActionButtons from "@/components/super-admin/UserActionButtons";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = { title: "User Detail" };
 export const revalidate = 0;
 
