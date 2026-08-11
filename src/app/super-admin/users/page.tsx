@@ -115,7 +115,7 @@ export default async function SuperAdminUsersPage({
             <tbody className="divide-y divide-white/[0.04]">
               {users.length === 0 ? (
                 <tr><td colSpan={6} className="text-center py-16 text-slate-600">No users found</td></tr>
-              ) : users.map((u) => (
+              ) : users.map((u: (typeof users)[number]) => (
                 <tr key={u.id} className="hover:bg-white/[0.02] transition-colors group">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">

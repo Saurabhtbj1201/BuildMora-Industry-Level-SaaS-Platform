@@ -105,7 +105,7 @@ export default async function SuperAdminTenantsPage({
             <tbody className="divide-y divide-white/[0.04]">
               {tenants.length === 0 ? (
                 <tr><td colSpan={8} className="text-center py-16 text-slate-600">No tenants found</td></tr>
-              ) : tenants.map((t) => (
+              ) : tenants.map((t: (typeof tenants)[number]) => (
                 <tr key={t.id} className="hover:bg-white/[0.02] transition-colors group">
                   <td className="px-5 py-4">
                     <p className="font-medium text-white">{t.siteName}</p>

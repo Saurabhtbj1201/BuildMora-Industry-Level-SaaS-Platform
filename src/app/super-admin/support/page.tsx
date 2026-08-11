@@ -47,7 +47,7 @@ export default async function SupportPage({
   ]);
 
   const pages = Math.ceil(total / limit);
-  const countMap = Object.fromEntries(statusCounts.map((s) => [s.status, s._count._all]));
+  const countMap = Object.fromEntries(statusCounts.map((s: { status: string; _count: { _all: number } }) => [s.status, s._count._all]));
 
   return (
     <div className="p-6 space-y-6 min-h-full">
@@ -95,7 +95,7 @@ export default async function SupportPage({
         </div>
       ) : (
         <div className="space-y-3">
-          {tickets.map((ticket) => (
+          {tickets.map((ticket: (typeof tickets)[number]) => (
             <SupportTicketCard
               key={ticket.id}
               ticket={{

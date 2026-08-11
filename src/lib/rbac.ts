@@ -114,7 +114,7 @@ export const AI_CREDIT_LIMITS: Record<PlanType, number> = {
 };
 
 export function getAiCreditLimit(plan: PlanType): number {
-  return AI_CREDIT_LIMITS[plan];
+  return AI_CREDIT_LIMITS[plan] ?? 0;
 }
 
 export function isUnlimited(limit: number): boolean {

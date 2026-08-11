@@ -16,7 +16,7 @@ export default async function SuperAdminSettingsPage() {
     orderBy: { createdAt: "asc" },
   });
 
-  const superAdmins = superAdminsRaw.map((a) => ({
+  const superAdmins = superAdminsRaw.map((a: (typeof superAdminsRaw)[number]) => ({
     ...a,
     createdAt: a.createdAt.toISOString(),
   }));

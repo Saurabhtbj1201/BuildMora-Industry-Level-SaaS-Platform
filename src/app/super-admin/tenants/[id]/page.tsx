@@ -106,7 +106,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
           <div className="grid grid-cols-3 gap-3">
             {Object.entries(tenant._count).map(([key, val]) => (
               <div key={key} className="bg-white/[0.03] border border-white/[0.05] rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-white font-display">{val}</p>
+                <p className="text-2xl font-bold text-white font-display">{val as number}</p>
                 <p className="text-[11px] text-slate-600 mt-0.5 capitalize">
                   {key.replace("Posts","").replace("openSource","OS ").replace("Projects","Proj.")}
                 </p>
@@ -126,7 +126,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
           <p className="text-sm text-slate-600">No AI credit records</p>
         ) : (
           <div className="space-y-3">
-            {tenant.aiCreditLedgers.map((l) => {
+            {tenant.aiCreditLedgers.map((l: { month: string; used: number; limit: number }) => {
               const pct = l.limit > 0 ? Math.min(100, Math.round((l.used / l.limit) * 100)) : 0;
               return (
                 <div key={l.month}>

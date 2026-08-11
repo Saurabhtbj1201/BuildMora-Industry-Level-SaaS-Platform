@@ -124,7 +124,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
             <div className="grid grid-cols-4 gap-2 pt-2 border-t border-white/[0.06]">
               {Object.entries(user.tenant._count).map(([key, val]) => (
                 <div key={key} className="text-center p-2 bg-white/[0.03] rounded-lg">
-                  <p className="text-base font-bold text-white">{val}</p>
+                  <p className="text-base font-bold text-white">{val as number}</p>
                   <p className="text-[10px] text-slate-600 capitalize">{key.replace("Posts", "")}</p>
                 </div>
               ))}
@@ -142,7 +142,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
             <Zap className="w-4 h-4 text-amber-400" />
             <h2 className="text-sm font-bold text-white font-display">AI Credits</h2>
           </div>
-          {user.tenant?.aiCreditLedgers.length ? user.tenant.aiCreditLedgers.map((l) => {
+          {user.tenant?.aiCreditLedgers.length ? user.tenant.aiCreditLedgers.map((l: { month: string; used: number; limit: number }) => {
             const pct = l.limit > 0 ? Math.min(100, Math.round((l.used / l.limit) * 100)) : 0;
             return (
               <div key={l.month} className="space-y-1.5">
@@ -172,7 +172,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
           <p className="text-sm text-slate-600 py-4 text-center">No audit logs for this user</p>
         ) : (
           <div className="space-y-0">
-            {user.auditLogs.map((log) => (
+            {user.auditLogs.map((log: { id: string; action: string; entity: string | null; ipAddress: string | null; createdAt: Date }) => (
               <div key={log.id} className="flex items-center gap-4 py-2.5 border-b border-white/[0.04] last:border-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0" />
                 <span className={cn("text-xs font-mono font-medium flex-1", actionColor(log.action))}>{log.action}</span>
