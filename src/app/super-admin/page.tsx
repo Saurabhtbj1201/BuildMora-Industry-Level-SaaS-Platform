@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Overview" };
 export const revalidate = 0;
 
 const PLAN_COLOR: Record<string, string> = {
-  FREE:       "bg-slate-500/20 text-slate-400 border-slate-500/20",
+  FREE:       "bg-slate-500/20 text-muted-foreground border-slate-500/20",
   STARTER:    "bg-blue-500/20 text-blue-400 border-blue-500/20",
   PRO:        "bg-violet-500/20 text-violet-400 border-violet-500/20",
   ENTERPRISE: "bg-amber-500/20 text-amber-400 border-amber-500/20",
@@ -30,7 +30,7 @@ const ACTION_COLOR: Record<string, string> = {
 
 function actionColor(action: string) {
   const prefix = Object.keys(ACTION_COLOR).find((k) => action.startsWith(k));
-  return prefix ? ACTION_COLOR[prefix] : "text-slate-400";
+  return prefix ? ACTION_COLOR[prefix] : "text-muted-foreground";
 }
 
 export default async function SuperAdminOverviewPage() {
@@ -108,11 +108,11 @@ export default async function SuperAdminOverviewPage() {
     <div className="p-6 space-y-8 min-h-full">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold font-display text-white flex items-center gap-2.5">
+        <h1 className="text-2xl font-bold font-display text-foreground flex items-center gap-2.5">
           <ShieldAlert className="w-6 h-6 text-violet-400" />
           Platform Overview
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
         </p>
       </div>
@@ -123,16 +123,16 @@ export default async function SuperAdminOverviewPage() {
           const Icon = kpi.icon;
           return (
             <div key={kpi.label}
-              className={cn("relative bg-[#0f1117] border border-white/[0.06] rounded-2xl p-5 overflow-hidden shadow-lg", kpi.glow)}>
+              className={cn("relative bg-card border border-border rounded-2xl p-5 overflow-hidden shadow-lg", kpi.glow)}>
               {/* Glow orb */}
               <div className={cn("absolute -top-6 -right-6 w-24 h-24 rounded-full bg-gradient-to-br opacity-20 blur-2xl", kpi.gradient)} />
               <div className="relative">
                 <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center mb-4 shadow-lg", kpi.gradient)}>
-                  <Icon className="w-5 h-5 text-white" />
+                  <Icon className="w-5 h-5 text-foreground" />
                 </div>
-                <p className="text-3xl font-bold font-display text-white">{kpi.value}</p>
-                <p className="text-sm font-medium text-slate-400 mt-0.5">{kpi.label}</p>
-                <p className="text-xs text-slate-600 mt-1">{kpi.sub}</p>
+                <p className="text-3xl font-bold font-display text-foreground">{kpi.value}</p>
+                <p className="text-sm font-medium text-muted-foreground mt-0.5">{kpi.label}</p>
+                <p className="text-xs text-muted-foreground/60 mt-1">{kpi.sub}</p>
               </div>
             </div>
           );
@@ -141,10 +141,10 @@ export default async function SuperAdminOverviewPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Plan Distribution */}
-        <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-6">
+        <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-5">
             <TrendingUp className="w-4 h-4 text-violet-400" />
-            <h2 className="text-sm font-bold text-white font-display">Tenants by Plan</h2>
+            <h2 className="text-sm font-bold text-foreground font-display">Tenants by Plan</h2>
           </div>
           <div className="space-y-3">
             {["FREE","STARTER","PRO","ENTERPRISE"].map((plan) => {
@@ -155,9 +155,9 @@ export default async function SuperAdminOverviewPage() {
                 <div key={plan}>
                   <div className="flex items-center justify-between mb-1.5">
                     <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-full border", PLAN_COLOR[plan])}>{plan}</span>
-                    <span className="text-xs font-mono text-slate-400">{count} <span className="text-slate-600">({pct}%)</span></span>
+                    <span className="text-xs font-mono text-muted-foreground">{count} <span className="text-muted-foreground/60">({pct}%)</span></span>
                   </div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-muted/50 rounded-full overflow-hidden">
                     <div
                       className={cn("h-full rounded-full bg-gradient-to-r transition-all",
                         plan === "FREE" ? "from-slate-500 to-slate-600" :
@@ -174,31 +174,31 @@ export default async function SuperAdminOverviewPage() {
         </div>
 
         {/* Urgent Tickets */}
-        <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-6">
+        <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-rose-400" />
-              <h2 className="text-sm font-bold text-white font-display">Open Tickets</h2>
+              <h2 className="text-sm font-bold text-foreground font-display">Open Tickets</h2>
             </div>
             <a href="/super-admin/support" className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 transition-colors">
               View all <ArrowUpRight className="w-3 h-3" />
             </a>
           </div>
           {urgentTickets.length === 0 ? (
-            <div className="text-center py-6 text-sm text-slate-600">No open tickets 🎉</div>
+            <div className="text-center py-6 text-sm text-muted-foreground/60">No open tickets 🎉</div>
           ) : (
             <div className="space-y-2.5">
               {urgentTickets.map((t) => (
-                <div key={t.id} className="flex items-start gap-3 p-3 bg-white/[0.03] border border-white/[0.05] rounded-xl">
+                <div key={t.id} className="flex items-start gap-3 p-3 bg-muted/30 border border-border rounded-xl">
                   <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0",
                     t.priority === "HIGH" ? "bg-rose-500/20 text-rose-400" :
-                    t.priority === "MEDIUM" ? "bg-amber-500/20 text-amber-400" : "bg-slate-500/20 text-slate-400"
+                    t.priority === "MEDIUM" ? "bg-amber-500/20 text-amber-400" : "bg-slate-500/20 text-muted-foreground"
                   )}>
                     {t.priority}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs text-white font-medium truncate">{t.subject}</p>
-                    <p className="text-[10px] text-slate-600 mt-0.5">{t.name}</p>
+                    <p className="text-xs text-foreground font-medium truncate">{t.subject}</p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-0.5">{t.name}</p>
                   </div>
                 </div>
               ))}
@@ -207,28 +207,28 @@ export default async function SuperAdminOverviewPage() {
         </div>
 
         {/* Recent Audit Logs */}
-        <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-6">
+        <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
               <Activity className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-bold text-white font-display">Recent Activity</h2>
+              <h2 className="text-sm font-bold text-foreground font-display">Recent Activity</h2>
             </div>
             <a href="/super-admin/audit-logs" className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 transition-colors">
               View all <ArrowUpRight className="w-3 h-3" />
             </a>
           </div>
           {auditLogs.length === 0 ? (
-            <div className="text-center py-6 text-sm text-slate-600">No recent activity</div>
+            <div className="text-center py-6 text-sm text-muted-foreground/60">No recent activity</div>
           ) : (
             <div className="space-y-2">
               {auditLogs.slice(0, 8).map((log) => (
-                <div key={log.id} className="flex items-start gap-2.5 py-2 border-b border-white/[0.04] last:border-0">
+                <div key={log.id} className="flex items-start gap-2.5 py-2 border-b border-border/60 last:border-0">
                   <div className="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1.5 shrink-0" />
                   <div className="min-w-0 flex-1">
                     <p className={cn("text-xs font-mono font-medium truncate", actionColor(log.action))}>{log.action}</p>
-                    <p className="text-[10px] text-slate-600 truncate">{log.user?.name ?? log.user?.email ?? "System"}</p>
+                    <p className="text-[10px] text-muted-foreground/60 truncate">{log.user?.name ?? log.user?.email ?? "System"}</p>
                   </div>
-                  <p className="text-[10px] text-slate-700 shrink-0">
+                  <p className="text-[10px] text-muted-foreground/40 shrink-0">
                     {new Date(log.createdAt).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
                   </p>
                 </div>
@@ -248,9 +248,9 @@ export default async function SuperAdminOverviewPage() {
         ].map(({ label, href, icon: Icon, color }) => (
           <a key={href} href={href}
             className={cn("flex items-center gap-3 p-4 rounded-xl border bg-gradient-to-br transition-all duration-150 group", color)}>
-            <Icon className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors shrink-0" />
-            <span className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">{label}</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-slate-300 ml-auto transition-colors" />
+            <Icon className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+            <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">{label}</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/60 group-hover:text-foreground ml-auto transition-colors" />
           </a>
         ))}
       </div>

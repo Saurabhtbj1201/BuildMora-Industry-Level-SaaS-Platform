@@ -15,7 +15,7 @@ const STATUS_STYLE: Record<string, string> = {
   OPEN:        "bg-rose-500/20 text-rose-400 border-rose-500/20",
   IN_PROGRESS: "bg-amber-500/20 text-amber-400 border-amber-500/20",
   RESOLVED:    "bg-emerald-500/20 text-emerald-400 border-emerald-500/20",
-  CLOSED:      "bg-slate-700/60 text-slate-400 border-slate-600/40",
+  CLOSED:      "bg-slate-700/60 text-muted-foreground border-slate-600/40",
 };
 
 export default async function SupportPage({
@@ -55,11 +55,11 @@ export default async function SupportPage({
     <div className="p-6 space-y-6 min-h-full">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold font-display text-white flex items-center gap-2.5">
+        <h1 className="text-2xl font-bold font-display text-foreground flex items-center gap-2.5">
           <LifeBuoy className="w-6 h-6 text-rose-400" />
           Support Requests
         </h1>
-        <p className="text-sm text-slate-500 mt-1">{total.toLocaleString()} total tickets</p>
+        <p className="text-sm text-muted-foreground mt-1">{total.toLocaleString()} total tickets</p>
       </div>
 
       {/* Status summary pills */}
@@ -67,7 +67,7 @@ export default async function SupportPage({
         {["OPEN","IN_PROGRESS","RESOLVED","CLOSED"].map((s) => (
           <Link key={s} href={`/super-admin/support?status=${s}`}
             className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-colors",
-              status === s ? STATUS_STYLE[s] + " ring-1 ring-offset-0" : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10"
+              status === s ? STATUS_STYLE[s] + " ring-1 ring-offset-0" : "bg-muted/50 text-muted-foreground border-border hover:bg-white/10"
             )}>
             {s.replace("_"," ")}
             <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">{countMap[s] ?? 0}</span>
@@ -75,7 +75,7 @@ export default async function SupportPage({
         ))}
         {(status || priority) && (
           <Link href="/super-admin/support"
-            className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors">× Clear</Link>
+            className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">× Clear</Link>
         )}
       </div>
 
@@ -83,16 +83,16 @@ export default async function SupportPage({
       <form method="GET" className="flex flex-wrap gap-3 items-center">
         <input type="hidden" name="status" value={status} />
         <select name="priority" defaultValue={priority}
-          className="px-3 py-2.5 bg-[#0f1117] border border-white/10 rounded-xl text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500">
+          className="px-3 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring">
           <option value="">All Priorities</option>
           {["URGENT","HIGH","MEDIUM","LOW"].map((p) => <option key={p} value={p}>{p}</option>)}
         </select>
-        <button type="submit" className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium rounded-xl transition-colors">Apply</button>
+        <button type="submit" className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-foreground text-sm font-medium rounded-xl transition-colors">Apply</button>
       </form>
 
       {/* Tickets */}
       {tickets.length === 0 ? (
-        <div className="text-center py-20 text-slate-600 bg-[#0f1117] border border-white/[0.06] rounded-2xl">
+        <div className="text-center py-20 text-muted-foreground/60 bg-card border border-border rounded-2xl">
           No tickets found
         </div>
       ) : (
@@ -120,10 +120,10 @@ export default async function SupportPage({
       {/* Pagination */}
       {pages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-slate-500">Showing {(page-1)*limit+1}–{Math.min(page*limit,total)} of {total}</p>
+          <p className="text-xs text-muted-foreground">Showing {(page-1)*limit+1}–{Math.min(page*limit,total)} of {total}</p>
           <div className="flex gap-2">
-            {page > 1 && <Link href={`?page=${page-1}&status=${status}&priority=${priority}`} className="px-3 py-1.5 text-xs rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 transition-colors">← Prev</Link>}
-            {page < pages && <Link href={`?page=${page+1}&status=${status}&priority=${priority}`} className="px-3 py-1.5 text-xs rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 transition-colors">Next →</Link>}
+            {page > 1 && <Link href={`?page=${page-1}&status=${status}&priority=${priority}`} className="px-3 py-1.5 text-xs rounded-lg bg-muted/50 text-foreground hover:bg-white/10 transition-colors">← Prev</Link>}
+            {page < pages && <Link href={`?page=${page+1}&status=${status}&priority=${priority}`} className="px-3 py-1.5 text-xs rounded-lg bg-muted/50 text-foreground hover:bg-white/10 transition-colors">Next →</Link>}
           </div>
         </div>
       )}

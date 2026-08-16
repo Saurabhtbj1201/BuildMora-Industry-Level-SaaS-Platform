@@ -31,11 +31,11 @@ export default async function SuperAdminSettingsPage() {
   return (
     <div className="p-6 space-y-8 min-h-full max-w-4xl">
       <div>
-        <h1 className="text-2xl font-bold font-display text-white flex items-center gap-2.5">
+        <h1 className="text-2xl font-bold font-display text-foreground flex items-center gap-2.5">
           <Settings className="w-6 h-6 text-violet-400" />
           Platform Settings
         </h1>
-        <p className="text-sm text-slate-500 mt-1">Manage super admins and grant AI credits</p>
+        <p className="text-sm text-muted-foreground mt-1">Manage super admins and grant AI credits</p>
       </div>
 
       <AdminSettingsClient superAdmins={superAdmins} tenants={tenants} />

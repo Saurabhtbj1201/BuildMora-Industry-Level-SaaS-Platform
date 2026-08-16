@@ -38,14 +38,14 @@ export default function TenantActionButtons({ tenantId, currentPlan, isActive }:
   return (
     <div className="flex flex-wrap gap-2">
       {/* Plan selector */}
-      <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-xl px-2 py-1.5">
+      <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-xl px-2 py-1.5">
         <select value={selectedPlan} onChange={(e) => setSelectedPlan(e.target.value as Plan)}
-          className="bg-transparent text-xs font-semibold text-slate-300 focus:outline-none">
+          className="bg-transparent text-xs font-semibold text-foreground focus:outline-none">
           {PLANS.map((p) => <option key={p} value={p}>{p}</option>)}
         </select>
         <button onClick={() => patch({ plan: selectedPlan }, "plan")}
           disabled={selectedPlan === currentPlan || !!loading}
-          className="p-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-white disabled:opacity-40 transition-colors">
+          className="p-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-foreground disabled:opacity-40 transition-colors">
           {loading === "plan" ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
         </button>
       </div>
@@ -69,20 +69,20 @@ export default function TenantActionButtons({ tenantId, currentPlan, isActive }:
 
       {showCreditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#0f1117] border border-white/10 rounded-2xl p-6 w-full max-w-sm space-y-4 shadow-2xl">
-            <h3 className="text-base font-bold text-white font-display flex items-center gap-2">
+          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm space-y-4 shadow-2xl">
+            <h3 className="text-base font-bold text-foreground font-display flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-400" /> Grant AI Credits
             </h3>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-500 block mb-1">Month</label>
+                <label className="text-xs text-muted-foreground block mb-1">Month</label>
                 <input type="month" value={month} onChange={(e) => setMonth(e.target.value)}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500" />
+                  className="w-full px-3 py-2 bg-muted/50 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-amber-500" />
               </div>
               <div>
-                <label className="text-xs text-slate-500 block mb-1">Credit Limit</label>
+                <label className="text-xs text-muted-foreground block mb-1">Credit Limit</label>
                 <input type="number" min={1} value={credits} onChange={(e) => setCredits(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500" />
+                  className="w-full px-3 py-2 bg-muted/50 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-amber-500" />
               </div>
             </div>
             <div className="flex gap-2 pt-2">
@@ -91,7 +91,7 @@ export default function TenantActionButtons({ tenantId, currentPlan, isActive }:
                 Confirm
               </button>
               <button onClick={() => setShowCreditModal(false)}
-                className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-slate-300 text-sm rounded-lg transition-colors">
+                className="flex-1 py-2 bg-muted/50 hover:bg-white/10 text-foreground text-sm rounded-lg transition-colors">
                 Cancel
               </button>
             </div>

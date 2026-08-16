@@ -23,7 +23,7 @@ const ACTION_CATEGORY: Record<string, { color: string; bg: string }> = {
 
 function getCategory(action: string) {
   return Object.entries(ACTION_CATEGORY).find(([k]) => action.startsWith(k))?.[1]
-    ?? { color: "text-slate-400", bg: "bg-slate-500/10" };
+    ?? { color: "text-muted-foreground", bg: "bg-slate-500/10" };
 }
 
 export default async function AuditLogsPage({
@@ -67,50 +67,50 @@ export default async function AuditLogsPage({
   return (
     <div className="p-6 space-y-6 min-h-full">
       <div>
-        <h1 className="text-2xl font-bold font-display text-white flex items-center gap-2.5">
+        <h1 className="text-2xl font-bold font-display text-foreground flex items-center gap-2.5">
           <ScrollText className="w-6 h-6 text-cyan-400" />
           Audit Logs
         </h1>
-        <p className="text-sm text-slate-500 mt-1">{total.toLocaleString()} events recorded</p>
+        <p className="text-sm text-muted-foreground mt-1">{total.toLocaleString()} events recorded</p>
       </div>
 
       {/* Filters */}
       <form method="GET" className="flex flex-wrap gap-3 items-center">
         <div className="relative min-w-48">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           <input name="action" defaultValue={action} placeholder="Action (e.g. project.created)…"
-            className="w-full pl-9 pr-4 py-2.5 bg-[#0f1117] border border-white/10 rounded-xl text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-violet-500" />
+            className="w-full pl-9 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring" />
         </div>
         <input name="from" type="date" defaultValue={from}
-          className="px-3 py-2.5 bg-[#0f1117] border border-white/10 rounded-xl text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500" />
-        <span className="text-slate-600 text-xs">to</span>
+          className="px-3 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
+        <span className="text-muted-foreground/60 text-xs">to</span>
         <input name="to" type="date" defaultValue={to}
-          className="px-3 py-2.5 bg-[#0f1117] border border-white/10 rounded-xl text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500" />
-        <button type="submit" className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium rounded-xl transition-colors">Filter</button>
+          className="px-3 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
+        <button type="submit" className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-foreground text-sm font-medium rounded-xl transition-colors">Filter</button>
         {(action || from || to) && (
-          <Link href="/super-admin/audit-logs" className="px-4 py-2.5 bg-white/5 hover:bg-white/10 text-slate-400 text-sm rounded-xl transition-colors">Clear</Link>
+          <Link href="/super-admin/audit-logs" className="px-4 py-2.5 bg-muted/50 hover:bg-white/10 text-muted-foreground text-sm rounded-xl transition-colors">Clear</Link>
         )}
       </form>
 
       {/* Table */}
-      <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.06]">
+              <tr className="border-b border-border">
                 {["Timestamp","Action","Entity","User","IP"].map((h) => (
-                  <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">{h}</th>
+                  <th key={h} className="px-5 py-3.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-border/60">
               {logs.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-16 text-slate-600">No audit logs found</td></tr>
+                <tr><td colSpan={5} className="text-center py-16 text-muted-foreground/60">No audit logs found</td></tr>
               ) : logs.map((log) => {
                 const cat = getCategory(log.action);
                 return (
-                  <tr key={log.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3.5 text-xs text-slate-500 font-mono whitespace-nowrap">
+                  <tr key={log.id} className="hover:bg-muted/20 transition-colors">
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground font-mono whitespace-nowrap">
                       {new Date(log.createdAt).toLocaleString("en-IN", {
                         day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
                       })}
@@ -120,7 +120,7 @@ export default async function AuditLogsPage({
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-xs text-slate-400 font-mono">
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground font-mono">
                       {log.entity ? `${log.entity}${log.entityId ? `:${log.entityId.slice(0, 8)}` : ""}` : "—"}
                     </td>
                     <td className="px-5 py-3.5">
@@ -129,9 +129,9 @@ export default async function AuditLogsPage({
                           className="text-xs text-violet-400 hover:text-violet-300 transition-colors">
                           {log.user.name ?? log.user.email}
                         </Link>
-                      ) : <span className="text-xs text-slate-600">System</span>}
+                      ) : <span className="text-xs text-muted-foreground/60">System</span>}
                     </td>
-                    <td className="px-5 py-3.5 text-xs text-slate-600 font-mono">{log.ipAddress ?? "—"}</td>
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground/60 font-mono">{log.ipAddress ?? "—"}</td>
                   </tr>
                 );
               })}
@@ -139,11 +139,11 @@ export default async function AuditLogsPage({
           </table>
         </div>
         {pages > 1 && (
-          <div className="flex items-center justify-between px-5 py-4 border-t border-white/[0.06]">
-            <p className="text-xs text-slate-500">Showing {(page-1)*limit+1}–{Math.min(page*limit,total)} of {total}</p>
+          <div className="flex items-center justify-between px-5 py-4 border-t border-border">
+            <p className="text-xs text-muted-foreground">Showing {(page-1)*limit+1}–{Math.min(page*limit,total)} of {total}</p>
             <div className="flex gap-2">
-              {page > 1 && <Link href={`?page=${page-1}&action=${action}&from=${from}&to=${to}`} className="px-3 py-1.5 text-xs rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 transition-colors">← Prev</Link>}
-              {page < pages && <Link href={`?page=${page+1}&action=${action}&from=${from}&to=${to}`} className="px-3 py-1.5 text-xs rounded-lg bg-white/5 text-slate-300 hover:bg-white/10 transition-colors">Next →</Link>}
+              {page > 1 && <Link href={`?page=${page-1}&action=${action}&from=${from}&to=${to}`} className="px-3 py-1.5 text-xs rounded-lg bg-muted/50 text-foreground hover:bg-white/10 transition-colors">← Prev</Link>}
+              {page < pages && <Link href={`?page=${page+1}&action=${action}&from=${from}&to=${to}`} className="px-3 py-1.5 text-xs rounded-lg bg-muted/50 text-foreground hover:bg-white/10 transition-colors">Next →</Link>}
             </div>
           </div>
         )}

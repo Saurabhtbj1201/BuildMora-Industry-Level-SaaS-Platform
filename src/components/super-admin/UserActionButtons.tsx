@@ -57,7 +57,7 @@ export default function UserActionButtons({ userId, isActive, isSuperAdmin, isSe
           disabled={!!loading}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border ${
             isSuperAdmin
-              ? "bg-slate-700/40 text-slate-400 hover:bg-slate-700/60 border-slate-600/40"
+              ? "bg-slate-700/40 text-muted-foreground hover:bg-slate-700/60 border-slate-600/40"
               : "bg-violet-500/15 text-violet-400 hover:bg-violet-500/25 border-violet-500/20"
           }`}
         >
@@ -81,20 +81,20 @@ export default function UserActionButtons({ userId, isActive, isSuperAdmin, isSe
       {/* Credit modal */}
       {showCreditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#0f1117] border border-white/10 rounded-2xl p-6 w-full max-w-sm space-y-4 shadow-2xl">
-            <h3 className="text-base font-bold text-white font-display flex items-center gap-2">
+          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm space-y-4 shadow-2xl">
+            <h3 className="text-base font-bold text-foreground font-display flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-400" /> Grant AI Credits
             </h3>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-slate-500 block mb-1">Month (YYYY-MM)</label>
+                <label className="text-xs text-muted-foreground block mb-1">Month (YYYY-MM)</label>
                 <input type="month" value={month} onChange={(e) => setMonth(e.target.value)}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500" />
+                  className="w-full px-3 py-2 bg-muted/50 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-amber-500" />
               </div>
               <div>
-                <label className="text-xs text-slate-500 block mb-1">Credit Limit</label>
+                <label className="text-xs text-muted-foreground block mb-1">Credit Limit</label>
                 <input type="number" min={1} value={credits} onChange={(e) => setCredits(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500" />
+                  className="w-full px-3 py-2 bg-muted/50 border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-amber-500" />
               </div>
             </div>
             <div className="flex gap-2 pt-2">
@@ -105,7 +105,7 @@ export default function UserActionButtons({ userId, isActive, isSuperAdmin, isSe
                 Grant Credits
               </button>
               <button onClick={() => setShowCreditModal(false)}
-                className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-slate-300 text-sm rounded-lg transition-colors">
+                className="flex-1 py-2 bg-muted/50 hover:bg-white/10 text-foreground text-sm rounded-lg transition-colors">
                 Cancel
               </button>
             </div>

@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Tenant Detail" };
 export const revalidate = 0;
 
 const PLAN_BADGE: Record<string, string> = {
-  FREE: "bg-slate-700/60 text-slate-300 border-slate-600/40",
+  FREE: "bg-slate-700/60 text-foreground border-slate-600/40",
   STARTER: "bg-blue-900/40 text-blue-300 border-blue-700/40",
   PRO: "bg-violet-900/40 text-violet-300 border-violet-700/40",
   ENTERPRISE: "bg-amber-900/40 text-amber-300 border-amber-700/40",
@@ -42,19 +42,19 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
   return (
     <div className="p-6 space-y-6 min-h-full max-w-5xl">
       <Link href="/super-admin/tenants"
-        className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-violet-400 transition-colors">
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-violet-400 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Tenants
       </Link>
 
       {/* Header card */}
-      <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-6">
+      <div className="bg-card border border-border rounded-2xl p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-blue-500/20 shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center text-foreground text-xl font-bold shadow-lg shadow-blue-500/20 shrink-0">
             {(tenant.siteName[0] ?? "T").toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h1 className="text-xl font-bold font-display text-white">{tenant.siteName}</h1>
+              <h1 className="text-xl font-bold font-display text-foreground">{tenant.siteName}</h1>
               <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-full border", PLAN_BADGE[tenant.plan])}>
                 {tenant.plan}
               </span>
@@ -66,9 +66,9 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                 {tenant.isActive ? "ACTIVE" : "INACTIVE"}
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-mono">{tenant.siteSlug}.buildmora.com</p>
+            <p className="text-xs text-muted-foreground font-mono">{tenant.siteSlug}.buildmora.com</p>
             {tenant.customDomain && (
-              <p className="text-xs text-slate-600 flex items-center gap-1 mt-0.5">
+              <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
                 <Globe className="w-3 h-3" /> {tenant.customDomain}
                 {tenant.customDomainVerified && <CheckCircle2 className="w-3 h-3 text-emerald-500" />}
               </p>
@@ -80,10 +80,10 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Owner */}
-        <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-5 space-y-3">
+        <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-violet-400" />
-            <h2 className="text-sm font-bold text-white font-display">Owner</h2>
+            <h2 className="text-sm font-bold text-foreground font-display">Owner</h2>
             <Link href={`/super-admin/users/${tenant.owner.id}`}
               className="ml-auto text-xs text-violet-400 hover:text-violet-300 transition-colors">View user →</Link>
           </div>
@@ -92,24 +92,24 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
             { label: "Email", value: tenant.owner.email, mono: true },
             { label: "Account Status", value: tenant.owner.isActive ? "Active" : "Disabled" },
           ].map(({ label, value, mono }) => (
-            <div key={label} className="flex items-center justify-between text-sm border-b border-white/[0.04] pb-2 last:border-0">
-              <span className="text-slate-500">{label}</span>
-              <span className={cn("font-medium", mono ? "font-mono text-xs text-slate-300" : "text-white")}>{value}</span>
+            <div key={label} className="flex items-center justify-between text-sm border-b border-border/60 pb-2 last:border-0">
+              <span className="text-muted-foreground">{label}</span>
+              <span className={cn("font-medium", mono ? "font-mono text-xs text-foreground" : "text-foreground")}>{value}</span>
             </div>
           ))}
         </div>
 
         {/* Content counts */}
-        <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-5">
+        <div className="bg-card border border-border rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <BarChart3 className="w-4 h-4 text-cyan-400" />
-            <h2 className="text-sm font-bold text-white font-display">Content Overview</h2>
+            <h2 className="text-sm font-bold text-foreground font-display">Content Overview</h2>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {Object.entries(tenant._count).map(([key, val]) => (
-              <div key={key} className="bg-white/[0.03] border border-white/[0.05] rounded-xl p-3 text-center">
-                <p className="text-2xl font-bold text-white font-display">{val as number}</p>
-                <p className="text-[11px] text-slate-600 mt-0.5 capitalize">
+              <div key={key} className="bg-muted/30 border border-border rounded-xl p-3 text-center">
+                <p className="text-2xl font-bold text-foreground font-display">{val as number}</p>
+                <p className="text-[11px] text-muted-foreground/60 mt-0.5 capitalize">
                   {key.replace("Posts","").replace("openSource","OS ").replace("Projects","Proj.")}
                 </p>
               </div>
@@ -119,13 +119,13 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
       </div>
 
       {/* AI Credits */}
-      <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-5 space-y-4">
+      <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-amber-400" />
-          <h2 className="text-sm font-bold text-white font-display">AI Credit History</h2>
+          <h2 className="text-sm font-bold text-foreground font-display">AI Credit History</h2>
         </div>
         {tenant.aiCreditLedgers.length === 0 ? (
-          <p className="text-sm text-slate-600">No AI credit records</p>
+          <p className="text-sm text-muted-foreground/60">No AI credit records</p>
         ) : (
           <div className="space-y-3">
             {tenant.aiCreditLedgers.map((l: { month: string; used: number; limit: number }) => {
@@ -133,11 +133,11 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               return (
                 <div key={l.month}>
                   <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-mono text-slate-500">{l.month}</span>
-                    <span className="text-white font-semibold">{l.used} <span className="text-slate-600">/ {l.limit === -1 ? "∞" : l.limit}</span></span>
+                    <span className="font-mono text-muted-foreground">{l.month}</span>
+                    <span className="text-foreground font-semibold">{l.used} <span className="text-muted-foreground/60">/ {l.limit === -1 ? "∞" : l.limit}</span></span>
                   </div>
                   {l.limit > 0 && (
-                    <div className="h-2 bg-white/5 rounded-full">
+                    <div className="h-2 bg-muted/50 rounded-full">
                       <div className={cn("h-full rounded-full transition-all",
                         pct > 80 ? "bg-gradient-to-r from-rose-500 to-rose-600" :
                         pct > 50 ? "bg-gradient-to-r from-amber-500 to-amber-600" :
@@ -156,16 +156,16 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
       {/* Subscription */}
       {subRecord && (
-        <div className="bg-[#0f1117] border border-white/[0.06] rounded-2xl p-5 space-y-3">
-          <h2 className="text-sm font-bold text-white font-display">Subscription</h2>
+        <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
+          <h2 className="text-sm font-bold text-foreground font-display">Subscription</h2>
           <div className="grid grid-cols-2 gap-3 text-sm">
             {[
               { label: "Status", value: subRecord.status ?? "—" },
               { label: "Razorpay Sub ID", value: subRecord.razorpaySubId ?? subRecord.razorpaySubscriptionId ?? "—", mono: true },
             ].map(({ label, value, mono }) => (
-              <div key={label} className="bg-white/[0.03] rounded-xl p-3">
-                <p className="text-slate-500 text-xs mb-1">{label}</p>
-                <p className={cn("font-medium text-white", mono ? "font-mono text-xs" : "")}>{value}</p>
+              <div key={label} className="bg-muted/30 rounded-xl p-3">
+                <p className="text-muted-foreground text-xs mb-1">{label}</p>
+                <p className={cn("font-medium text-foreground", mono ? "font-mono text-xs" : "")}>{value}</p>
               </div>
             ))}
           </div>
