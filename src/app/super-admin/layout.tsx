@@ -10,10 +10,14 @@ export default async function SuperAdminLayout({ children }: { children: ReactNo
 
   return (
     <AuthSessionProvider session={session}>
-      <div className="flex h-screen bg-[#080b12] overflow-hidden">
-        <SuperAdminSidebar adminName={session.user?.name ?? session.user?.email ?? "Admin"} />
+      <div className="flex h-screen bg-background overflow-hidden">
+        <SuperAdminSidebar
+          adminName={session.user?.name ?? session.user?.email ?? "Admin"}
+          adminEmail={session.user?.email ?? ""}
+          adminImage={session.user?.image ?? null}
+        />
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto bg-surface">
             {children}
           </main>
         </div>

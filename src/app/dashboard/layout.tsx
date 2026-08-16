@@ -47,6 +47,7 @@ export default async function DashboardLayout({
           tenantSlug={tenant.siteSlug}
           siteName={tenant.siteName}
           aiCredits={aiCredits}
+          isSuperAdmin={session.user.isSuperAdmin === true}
         />
 
         {/* Main content area */}

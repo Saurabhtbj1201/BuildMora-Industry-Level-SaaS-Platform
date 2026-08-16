@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -22,6 +22,8 @@ import {
   Zap,
   LogOut,
   ExternalLink,
+  ShieldAlert,
+  ArrowLeftRight,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
@@ -79,14 +81,17 @@ interface DashboardSidebarProps {
   tenantSlug: string;
   siteName: string;
   aiCredits?: { used: number; limit: number };
+  isSuperAdmin?: boolean;
 }
 
 export function DashboardSidebar({
   tenantSlug,
   siteName,
   aiCredits,
+  isSuperAdmin = false,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const isActive = (href: string) =>
@@ -116,6 +121,25 @@ export function DashboardSidebar({
           </p>
         </div>
       </div>
+
+      {/* Super Admin Mode Banner — only visible for super admins */}
+      {isSuperAdmin && (
+        <div className="mx-3 mt-3">
+          <button
+            onClick={() => router.push("/super-admin")}
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl
+              bg-violet-600/10 border border-violet-500/20 text-violet-400
+              hover:bg-violet-600/20 hover:border-violet-500/40 hover:text-violet-300
+              transition-all duration-150 group text-xs font-semibold"
+          >
+            <div className="w-5 h-5 rounded-md bg-violet-600/20 flex items-center justify-center shrink-0 group-hover:bg-violet-600/30 transition-colors">
+              <ShieldAlert className="w-3 h-3" />
+            </div>
+            <span className="flex-1 text-left">Super Admin Panel</span>
+            <ArrowLeftRight className="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+          </button>
+        </div>
+      )}
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
