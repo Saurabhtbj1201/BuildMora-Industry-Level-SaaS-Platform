@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { withinLimit } from "@/lib/planLimits";
 
 export const dynamic = 'force-dynamic';
 
@@ -62,15 +63,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
   }
 
-  // Plan limits check (FREE: 5 posts)
-  if (tenant.plan === "FREE") {
-    const count = await prisma.blogPost.count({ where: { tenantId: tenant.id } });
-    if (count >= 5) {
-      return NextResponse.json(
-        { error: "Free plan allows up to 5 blog posts. Upgrade to continue." },
-        { status: 403 }
-      );
-    }
+  // ── Plan limit check ─────────────────────────────────────────────────────
+  const postCount = await prisma.blogPost.count({ where: { tenantId: tenant.id } });
+  if (!withinLimit(tenant.plan, "blogPosts", postCount)) {
+    return NextResponse.json(
+      { error: `Blog post limit reached for your ${tenant.plan} plan. Upgrade to add more.` },
+      { status: 403 }
+    );
   }
 
   const { scheduledAt, publishedAt, featuredImage, ...rest } = parsed.data;

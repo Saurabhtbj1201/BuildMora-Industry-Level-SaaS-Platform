@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { withinLimit } from "@/lib/planLimits";
 
 export const dynamic = 'force-dynamic';
 
@@ -49,15 +50,13 @@ export async function POST(request: Request) {
   const tenant = await prisma.tenant.findUnique({ where: { ownerId: session.user.id }, select: { id: true, plan: true } });
   if (!tenant) return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
 
-  // Plan limits: FREE = 1 OS project
-  if (tenant.plan === "FREE") {
-    const count = await prisma.openSourceProject.count({ where: { tenantId: tenant.id } });
-    if (count >= 1) {
-      return NextResponse.json(
-        { error: "Free plan allows 1 open source project. Upgrade to add more." },
-        { status: 403 }
-      );
-    }
+  // ── Plan limit check ─────────────────────────────────────────────────────
+  const osCount = await prisma.openSourceProject.count({ where: { tenantId: tenant.id } });
+  if (!withinLimit(tenant.plan, "openSource", osCount)) {
+    return NextResponse.json(
+      { error: `Open source project limit reached for your ${tenant.plan} plan. Upgrade to add more.` },
+      { status: 403 }
+    );
   }
 
   const body = await request.json();

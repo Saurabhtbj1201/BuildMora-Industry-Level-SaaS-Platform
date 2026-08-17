@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { withinLimit } from "@/lib/planLimits";
 
 export const dynamic = 'force-dynamic';
 
@@ -42,8 +43,18 @@ export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const tenant = await prisma.tenant.findUnique({ where: { ownerId: session.user.id }, select: { id: true } });
+  const tenant = await prisma.tenant.findUnique({ where: { ownerId: session.user.id }, select: { id: true, plan: true } });
   if (!tenant) return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+
+  // ── Plan limit check ─────────────────────────────────────────────────────
+  const serviceCount = await prisma.service.count({ where: { tenantId: tenant.id } });
+  if (!withinLimit(tenant.plan, "services", serviceCount)) {
+    return NextResponse.json(
+      { error: `Service limit reached for your ${tenant.plan} plan. Upgrade to add more.` },
+      { status: 403 }
+    );
+  }
+
 
   const body = await request.json();
   const parsed = serviceSchema.safeParse(body);

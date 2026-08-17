@@ -255,6 +255,7 @@ model Tenant {
   aiCreditLedgers    AiCreditLedger[]
   analyticsEvents    AnalyticsEvent[]
   supportRequests    SupportRequest[]
+  paymentLogs        PaymentLog[]
 }
 
 model TenantUserRole {
@@ -713,15 +714,17 @@ model Subscription {
 model PaymentLog {
   id       String @id @default(cuid())
   tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  razorpayOrderId   String?
-  razorpayPaymentId String?
-  razorpaySignature String?
-  amount            Decimal @db.Decimal(10, 2)
-  currency          String  @default("INR")
-  status            String  // "captured" | "failed" | "refunded"
-  description       String?
-  metadata          Json?
+  razorpayOrderId        String?
+  razorpayPaymentId      String?
+  razorpaySignature      String?
+  razorpaySubscriptionId String?
+  amount                 Decimal @db.Decimal(10, 2)
+  currency               String  @default("INR")
+  status                 String  // "captured" | "failed" | "refunded"
+  description            String?
+  metadata               Json?
 
   createdAt DateTime @default(now())
 

@@ -6,6 +6,7 @@ import {
 } from "@/lib/api";
 import { hasPermission } from "@/lib/rbac";
 import { projectSchema } from "@/lib/validators";
+import { withinLimit } from "@/lib/planLimits";
 
 export const dynamic = 'force-dynamic';
 
@@ -62,6 +63,13 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
 
   if (!hasPermission(role, "projects:write")) {
     return err("Insufficient permissions", 403);
+  }
+
+  // ── Plan limit check ──────────────────────────────────────────────────────
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } });
+  const projectCount = await prisma.project.count({ where: { tenantId } });
+  if (tenant && !withinLimit(tenant.plan, "projects", projectCount)) {
+    return err(`Project limit reached for your ${tenant.plan} plan. Upgrade to add more projects.`, 403);
   }
 
   const body = await parseBody(req, projectSchema);

@@ -24,6 +24,7 @@ import {
   ExternalLink,
   ShieldAlert,
   ArrowLeftRight,
+  ReceiptText,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
@@ -75,6 +76,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Contacts", href: "/dashboard/contacts", icon: Mail },
   { label: "Admins", href: "/dashboard/admins", icon: ShieldCheck },
   { label: "Site Settings", href: "/dashboard/settings", icon: Settings },
+  { label: "Billing", href: "/dashboard/billing", icon: ReceiptText },
 ];
 
 interface DashboardSidebarProps {
