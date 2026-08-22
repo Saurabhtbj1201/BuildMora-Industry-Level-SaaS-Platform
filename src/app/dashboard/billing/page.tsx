@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { PlanCard } from "@/components/billing/PlanCard";
 import { UpgradeModal } from "@/components/billing/UpgradeModal";
 import { PLAN_LIMITS } from "@/lib/planLimits";
-import { PLAN_PRICING } from "@/lib/razorpay";
+import { PLAN_PRICING } from "@/lib/billingConfig";
 import { PLAN_FEATURES } from "@/lib/planLimits";
 import type { PlanType } from "@prisma/client";
 

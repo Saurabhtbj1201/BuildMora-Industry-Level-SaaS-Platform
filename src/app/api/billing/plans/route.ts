@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PLAN_PRICING } from "@/lib/razorpay";
+import { PLAN_PRICING } from "@/lib/billingConfig";
 import { PLAN_FEATURES, PLAN_LIMITS } from "@/lib/planLimits";
 import type { PlanType } from "@prisma/client";
 
