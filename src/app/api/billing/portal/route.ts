@@ -10,55 +10,64 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // ── Fetch tenant basics ────────────────────────────────────────────────────
   const tenant = await prisma.tenant.findUnique({
-    where: { ownerId: session.user.id },
-    select: {
-      id: true,
-      plan: true,
-      subscription: true,
-      paymentLogs: {
-        orderBy: { createdAt: "desc" },
-        take: 20,
-        select: {
-          id: true,
-          amount: true,
-          currency: true,
-          status: true,
-          description: true,
-          createdAt: true,
-          razorpayPaymentId: true,
-        },
-      },
-      aiCreditLedgers: {
-        where: { month: new Date().toISOString().slice(0, 7) },
-        select: { used: true, limit: true },
-        take: 1,
-      },
-      _count: {
-        select: {
-          projects:    true,
-          blog:        true,
-          services:    true,
-          openSource:  true,
-        },
-      },
-    },
+    where:  { ownerId: session.user.id },
+    select: { id: true, plan: true },
   });
 
   if (!tenant) {
     return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
   }
 
+  const currentMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+
+  // ── Run all sub-queries in parallel ────────────────────────────────────────
+  const [subscription, payments, aiLedger, counts] = await Promise.all([
+    prisma.subscription.findUnique({
+      where: { tenantId: tenant.id },
+    }),
+
+    prisma.paymentLog.findMany({
+      where:   { tenantId: tenant.id },
+      orderBy: { createdAt: "desc" },
+      take:    20,
+      select: {
+        id:               true,
+        amount:           true,
+        currency:         true,
+        status:           true,
+        description:      true,
+        createdAt:        true,
+        razorpayPaymentId: true,
+      },
+    }),
+
+    prisma.aiCreditLedger.findUnique({
+      where: { tenantId_month: { tenantId: tenant.id, month: currentMonth } },
+      select: { used: true, limit: true },
+    }),
+
+    Promise.all([
+      prisma.project.count({ where: { tenantId: tenant.id } }),
+      prisma.blogPost.count({ where: { tenantId: tenant.id } }),
+      prisma.service.count({ where: { tenantId: tenant.id } }),
+      prisma.openSourceProject.count({ where: { tenantId: tenant.id } }),
+    ]),
+  ]);
+
+  const [projectCount, blogCount, serviceCount, osCount] = counts;
+
   return NextResponse.json({
     plan:         tenant.plan,
-    subscription: tenant.subscription,
-    payments:     tenant.paymentLogs,
+    subscription,
+    payments,
     usage: {
-      projects:   tenant._count.projects,
-      blogPosts:  tenant._count.blog,
-      services:   tenant._count.services,
-      openSource: tenant._count.openSource,
-      aiCredits:  tenant.aiCreditLedgers[0] ?? { used: 0, limit: 10 },
+      projects:   projectCount,
+      blogPosts:  blogCount,
+      services:   serviceCount,
+      openSource: osCount,
+      aiCredits:  aiLedger ?? { used: 0, limit: 10 },
     },
   });
 }
