@@ -26,9 +26,10 @@ interface SettingsFormProps {
     customDomainVerified?: boolean;
   };
   publicSiteUrl: string;
+  isVercelPreview?: boolean;
 }
 
-export function SettingsForm({ initialSettings, publicSiteUrl }: SettingsFormProps) {
+export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }: SettingsFormProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"general" | "seo" | "analytics" | "domain">("general");
   const [loading, setLoading] = useState(false);
@@ -277,27 +278,37 @@ export function SettingsForm({ initialSettings, publicSiteUrl }: SettingsFormPro
             </p>
           </div>
 
-          {/* Default subdomain — derived from current host */}
+          {/* Default subdomain / public site URL */}
           <div className="p-4 bg-muted/30 border border-border rounded-xl">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-xs font-medium text-muted-foreground mb-1">Default Subdomain</p>
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  {isVercelPreview ? "Public Site URL" : "Default Subdomain"}
+                </p>
                 <p className="text-sm font-bold font-mono text-foreground break-all">
                   {publicSiteUrl}
                 </p>
               </div>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success/10 text-success flex items-center gap-1 shrink-0">
-                <Check className="w-3 h-3" /> Active SSL
+                <Check className="w-3 h-3" /> Active
               </span>
             </div>
-            <a
-              href={publicSiteUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"
-            >
-              <ExternalLink className="w-3 h-3" /> View Public Site
-            </a>
+            {isVercelPreview ? (
+              <p className="mt-2 text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
+                <Info className="w-3 h-3 shrink-0 mt-0.5" />
+                Subdomain routing (e.g. <code className="font-mono">{`{slug}.buildmora.com`}</code>) requires a custom domain.
+                Add your domain below and connect it to Vercel to enable per-tenant subdomains.
+              </p>
+            ) : (
+              <a
+                href={publicSiteUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"
+              >
+                <ExternalLink className="w-3 h-3" /> View Public Site
+              </a>
+            )}
           </div>
 
           {/* Custom domain */}
