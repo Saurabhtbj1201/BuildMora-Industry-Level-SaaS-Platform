@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { razorpay } from "@/lib/razorpay";
+import { getRazorpay } from "@/lib/razorpay";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ export async function POST() {
 
   try {
     // Cancel at end of current billing period
-    await (razorpay.subscriptions as unknown as {
+    await (getRazorpay().subscriptions as unknown as {
       cancel: (id: string, cancelAtCycleEnd: boolean) => Promise<void>;
     }).cancel(tenant.subscription.razorpaySubId, true);
 

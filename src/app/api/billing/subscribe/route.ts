@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { razorpay, RAZORPAY_PLAN_IDS } from "@/lib/razorpay";
+import { getRazorpay, RAZORPAY_PLAN_IDS } from "@/lib/razorpay";
 import type { PlanType } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -54,7 +54,8 @@ export async function POST(req: NextRequest) {
       subscriptionParams.customer_id = tenant.subscription.razorpayCustomerId;
     }
 
-    const subscription = await razorpay.subscriptions.create(subscriptionParams as unknown as Parameters<typeof razorpay.subscriptions.create>[0]);
+    const rz = getRazorpay();
+    const subscription = await rz.subscriptions.create(subscriptionParams as unknown as Parameters<typeof rz.subscriptions.create>[0]);
 
     return NextResponse.json({
       subscriptionId: subscription.id,
