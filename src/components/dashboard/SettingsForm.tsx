@@ -54,7 +54,7 @@ export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }
   const [customDomain, setCustomDomain] = useState(initialSettings.customDomain ?? "");
 
   const handleCopyCname = () => {
-    navigator.clipboard.writeText("cname.buildmora.com");
+    navigator.clipboard.writeText("cname.buildmora.tech");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -296,7 +296,7 @@ export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }
             {isVercelPreview ? (
               <p className="mt-2 text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
                 <Info className="w-3 h-3 shrink-0 mt-0.5" />
-                Subdomain routing (e.g. <code className="font-mono">{`{slug}.buildmora.com`}</code>) requires a custom domain.
+                Subdomain routing (e.g. <code className="font-mono">{`{slug}.buildmora.tech`}</code>) requires a custom domain.
                 Add your domain below and connect it to Vercel to enable per-tenant subdomains.
               </p>
             ) : (
@@ -343,7 +343,7 @@ export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }
               <div>
                 <span className="text-muted-foreground mr-4">Type: CNAME</span>
                 <span className="text-muted-foreground mr-4">Host: @ / subdomain</span>
-                <span className="text-foreground font-semibold">Target: cname.buildmora.com</span>
+                <span className="text-foreground font-semibold">Target: cname.buildmora.tech</span>
               </div>
               <Button type="button" variant="ghost" size="sm" onClick={handleCopyCname} className="gap-1 text-xs">
                 {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}

@@ -119,7 +119,7 @@ export function DashboardSidebar({
             {siteName}
           </p>
           <p className="text-xs text-muted-foreground truncate">
-            {tenantSlug}.buildmora.com
+            {tenantSlug}.{process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech"}
           </p>
         </div>
       </div>
@@ -246,7 +246,7 @@ export function DashboardSidebar({
       {/* Footer actions */}
       <div className="px-3 py-3 border-t border-border space-y-0.5">
         <Link
-          href={`https://${tenantSlug}.buildmora.com`}
+          href={`https://${tenantSlug}.${process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech"}`}
           target="_blank"
           className="sidebar-link text-xs"
         >

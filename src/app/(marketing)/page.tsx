@@ -52,7 +52,7 @@ const FEATURES = [
     icon: Globe,
     title: "Custom Domains",
     description:
-      "Connect your own domain. Every portfolio gets a free subdomain at {you}.buildmora.com on all plans.",
+      "Connect your own domain. Every portfolio gets a free subdomain at {you}.buildmora.tech on all plans.",
     color: "warning",
   },
   {
@@ -82,7 +82,7 @@ const PLANS = [
       "5 Blog Posts",
       "1 Open Source Project",
       "10 AI assists/month",
-      "{you}.buildmora.com subdomain",
+      "{you}.buildmora.tech subdomain",
       "Basic analytics",
       "Expense tracker",
     ],

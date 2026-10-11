@@ -131,7 +131,7 @@ export default async function PublicLayout({ children }: Props) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-border text-xs text-muted-foreground">
             <p>{tenant.footerText ?? `© ${new Date().getFullYear()} ${tenant.siteName}. All rights reserved.`}</p>
             <a
-              href="https://buildmora.com"
+              href={process.env.NEXT_PUBLIC_APP_URL ?? "https://buildmora.tech"}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1 hover:text-primary transition-colors"

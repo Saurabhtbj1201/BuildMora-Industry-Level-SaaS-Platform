@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { resolveTenant } from "@/lib/tenant";
 
-const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.com";
+const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech";
+// Also treat the Vercel deployment URL as a marketing domain so it doesn't
+// try to resolve a tenant when accessed directly via buildmora.vercel.app
+const VERCEL_URL = process.env.VERCEL_URL ? `${process.env.VERCEL_URL}` : null;
 
 // Paths requiring super admin
 const SUPER_ADMIN_PATHS = ["/super-admin"];
@@ -25,7 +28,10 @@ export default async function proxy(req: NextRequest) {
     host === APP_DOMAIN ||
     host === `www.${APP_DOMAIN}` ||
     host === "localhost:3000" ||
-    host.startsWith("localhost:");
+    host.startsWith("localhost:") ||
+    // Always treat Vercel deployment URL as marketing domain
+    (VERCEL_URL !== null && host === VERCEL_URL) ||
+    host.endsWith(".vercel.app");
 
   if (!isMarketingDomain) {
     const tenant = await resolveTenant(host);

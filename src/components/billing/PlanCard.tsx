@@ -119,7 +119,7 @@ export function PlanCard({
           </div>
         ) : id === "ENTERPRISE" ? (
           <a
-            href="mailto:support@buildmora.com"
+            href="mailto:support@buildmora.tech"
             className="block w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
           >
             Contact Sales

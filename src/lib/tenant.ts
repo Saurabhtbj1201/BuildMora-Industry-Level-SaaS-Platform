@@ -52,9 +52,9 @@ function setCache(cache: Map<string, CacheEntry>, key: string, tenantId: string)
 export async function resolveTenant(
   host: string
 ): Promise<{ tenantId: string; slug: string } | null> {
-  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.com";
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech";
 
-  // 1. Subdomain routing: {slug}.buildmora.com
+  // 1. Subdomain routing: {slug}.buildmora.tech
   if (host.endsWith(`.${appDomain}`)) {
     const slug = host.replace(`.${appDomain}`, "").toLowerCase();
 

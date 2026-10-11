@@ -67,12 +67,12 @@ export function estimateReadingTime(content: string): number {
 }
 
 export function absoluteUrl(path: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://buildmora.com";
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://buildmora.tech";
   return `${base}${path}`;
 }
 
 export function getTenantUrl(slug: string, customDomain?: string | null): string {
   if (customDomain) return `https://${customDomain}`;
-  const domain = process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.com";
+  const domain = process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech";
   return `https://${slug}.${domain}`;
 }

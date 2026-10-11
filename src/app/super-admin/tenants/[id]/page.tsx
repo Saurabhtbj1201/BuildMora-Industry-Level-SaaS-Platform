@@ -66,7 +66,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                 {tenant.isActive ? "ACTIVE" : "INACTIVE"}
               </span>
             </div>
-            <p className="text-xs text-muted-foreground font-mono">{tenant.siteSlug}.buildmora.com</p>
+            <p className="text-xs text-muted-foreground font-mono">{tenant.siteSlug}.{process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech"}</p>
             {tenant.customDomain && (
               <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
                 <Globe className="w-3 h-3" /> {tenant.customDomain}

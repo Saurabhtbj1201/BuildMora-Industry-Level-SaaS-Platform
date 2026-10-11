@@ -126,7 +126,7 @@ function RegisterContent() {
           </h2>
           <div className="space-y-3">
             {[
-              { icon: "🚀", text: "Free subdomain: you.buildmora.com" },
+              { icon: "🚀", text: "Free subdomain: you.buildmora.tech" },
               { icon: "🤖", text: "10 AI assists/month on free plan" },
               { icon: "📊", text: "Analytics dashboard included" },
               { icon: "🔒", text: "MFA security out of the box" },
