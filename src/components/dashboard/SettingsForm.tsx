@@ -50,7 +50,8 @@ export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }
   // Analytics
   const [gaMeasurementId, setGaMeasurementId] = useState(initialSettings.gaMeasurementId ?? "");
 
-  // Domain
+  // Domain & Subdomain
+  const [siteSlug, setSiteSlug] = useState(initialSettings.siteSlug ?? "");
   const [customDomain, setCustomDomain] = useState(initialSettings.customDomain ?? "");
 
   const handleCopyCname = () => {
@@ -67,6 +68,7 @@ export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }
 
     const payload = {
       siteName,
+      siteSlug: siteSlug.toLowerCase().trim(),
       tagline,
       footerText,
       seoDescription,
@@ -278,15 +280,43 @@ export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }
             </p>
           </div>
 
-          {/* Default subdomain / public site URL */}
+          {/* Subdomain Editor */}
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1">
+                Choose Your Portfolio Subdomain / Username
+              </label>
+              <div className="flex items-center gap-2 max-w-lg">
+                <span className="text-xs text-muted-foreground font-mono bg-muted px-3 py-2.5 rounded-lg border border-border shrink-0 select-none">
+                  https://
+                </span>
+                <Input
+                  value={siteSlug}
+                  onChange={(e) => setSiteSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                  placeholder="your-username"
+                  className="font-mono text-sm"
+                />
+                <span className="text-xs text-muted-foreground font-mono bg-muted px-3 py-2.5 rounded-lg border border-border shrink-0 select-none">
+                  .{process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech"}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                This is your free, custom subdomain. Use lowercase letters, numbers, and hyphens (3–48 chars). Click &quot;Save Changes&quot; to apply.
+              </p>
+            </div>
+          </div>
+
+          {/* Current Live Subdomain Link */}
           <div className="p-4 bg-muted/30 border border-border rounded-xl">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-xs font-medium text-muted-foreground mb-1">
-                  {isVercelPreview ? "Public Site URL" : "Default Subdomain"}
+                  Live Subdomain URL
                 </p>
                 <p className="text-sm font-bold font-mono text-foreground break-all">
-                  {publicSiteUrl}
+                  {siteSlug === initialSettings.siteSlug
+                    ? publicSiteUrl
+                    : `https://${siteSlug || "username"}.${process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech"}`}
                 </p>
               </div>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-success/10 text-success flex items-center gap-1 shrink-0">
@@ -296,12 +326,13 @@ export function SettingsForm({ initialSettings, publicSiteUrl, isVercelPreview }
             {isVercelPreview ? (
               <p className="mt-2 text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
                 <Info className="w-3 h-3 shrink-0 mt-0.5" />
-                Subdomain routing (e.g. <code className="font-mono">{`{slug}.buildmora.tech`}</code>) requires a custom domain.
-                Add your domain below and connect it to Vercel to enable per-tenant subdomains.
+                Wildcard DNS record required: add <code className="font-mono">*.buildmora.tech</code> in your DNS provider and Vercel domains for subdomains to resolve publicly.
               </p>
             ) : (
               <a
-                href={publicSiteUrl}
+                href={siteSlug === initialSettings.siteSlug
+                  ? publicSiteUrl
+                  : `https://${siteSlug || "username"}.${process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech"}`}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-3 inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"

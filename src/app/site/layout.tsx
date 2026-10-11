@@ -36,21 +36,21 @@ export default async function PublicLayout({ children }: Props) {
   } | null;
 
   const nav = [
-    { label: "Home",        href: "/" },
-    { label: "Projects",    href: "/projects" },
+    { label: "Home", href: "/" },
+    { label: "Projects", href: "/projects" },
     { label: "Open Source", href: "/open-source" },
-    { label: "Blog",        href: "/blog" },
-    { label: "Services",    href: "/services" },
-    { label: "About",       href: "/about" },
+    { label: "Blog", href: "/blog" },
+    { label: "Services", href: "/services" },
+    { label: "About", href: "/about" },
   ];
 
   const socialLinks = [
-    { Icon: GithubIcon,    href: profile?.github,    label: "GitHub" },
-    { Icon: LinkedinIcon,  href: profile?.linkedin,  label: "LinkedIn" },
-    { Icon: TwitterIcon,   href: profile?.twitter,   label: "Twitter" },
+    { Icon: GithubIcon, href: profile?.github, label: "GitHub" },
+    { Icon: LinkedinIcon, href: profile?.linkedin, label: "LinkedIn" },
+    { Icon: TwitterIcon, href: profile?.twitter, label: "Twitter" },
     { Icon: InstagramIcon, href: profile?.instagram, label: "Instagram" },
-    { Icon: YoutubeIcon,   href: profile?.youtube,   label: "YouTube" },
-    { Icon: Globe,         href: profile?.website,   label: "Website" },
+    { Icon: YoutubeIcon, href: profile?.youtube, label: "YouTube" },
+    { Icon: Globe, href: profile?.website, label: "Website" },
   ].filter((s) => s.href);
 
   return (
@@ -131,7 +131,7 @@ export default async function PublicLayout({ children }: Props) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-border text-xs text-muted-foreground">
             <p>{tenant.footerText ?? `© ${new Date().getFullYear()} ${tenant.siteName}. All rights reserved.`}</p>
             <a
-              href={process.env.NEXT_PUBLIC_APP_URL ?? "https://buildmora.tech"}
+              href={process.env.NEXT_PUBLIC_APP_URL ?? "https://www.buildmora.tech"}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1 hover:text-primary transition-colors"

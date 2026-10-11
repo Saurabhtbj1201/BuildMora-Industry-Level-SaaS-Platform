@@ -23,7 +23,7 @@ async function main() {
 
   // ─── Super Admin User ────────────────────────────────────────────────────
   const superAdminEmail =
-    process.env.SUPER_ADMIN_EMAIL ?? "admin@buildmora.com";
+    process.env.SUPER_ADMIN_EMAIL ?? "admin@buildmora.tech";
 
   const existingAdmin = await prisma.user.findUnique({
     where: { email: superAdminEmail },
@@ -72,7 +72,7 @@ async function main() {
 
   // ─── Demo Tenant (for development) ───────────────────────────────────────
   if (process.env.NODE_ENV === "development") {
-    const demoEmail = "demo@buildmora.com";
+    const demoEmail = "demo@buildmora.tech";
     const existingDemo = await prisma.user.findUnique({
       where: { email: demoEmail },
     });
@@ -154,7 +154,7 @@ async function main() {
           description:
             "<p>A multi-tenant SaaS platform for students and professionals to showcase their work.</p>",
           techStack: ["Next.js", "TypeScript", "PostgreSQL", "AWS"],
-          liveLink: "https://buildmora.com",
+          liveLink: "https://www.buildmora.tech",
           githubLink: "https://github.com/demo/buildmora",
           isPublished: true,
         },

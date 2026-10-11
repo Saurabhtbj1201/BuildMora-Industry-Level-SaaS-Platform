@@ -67,7 +67,7 @@ export function estimateReadingTime(content: string): number {
 }
 
 export function absoluteUrl(path: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://buildmora.tech";
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.buildmora.tech";
   return `${base}${path}`;
 }
 

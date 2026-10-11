@@ -266,7 +266,7 @@ export function ProjectForm({ initialData, isEditing = false }: ProjectFormProps
               </label>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground font-mono bg-muted px-2.5 py-2 rounded-lg border border-border">
-                  buildmora.com/projects/
+                  www.buildmora.tech/projects/
                 </span>
                 <Input
                   value={slug}

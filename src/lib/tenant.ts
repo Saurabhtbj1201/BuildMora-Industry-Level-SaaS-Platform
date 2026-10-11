@@ -52,14 +52,27 @@ function setCache(cache: Map<string, CacheEntry>, key: string, tenantId: string)
 export async function resolveTenant(
   host: string
 ): Promise<{ tenantId: string; slug: string } | null> {
-  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech";
+  const appDomain = (process.env.NEXT_PUBLIC_APP_DOMAIN ?? "buildmora.tech").toLowerCase();
+  const cleanHost = host.split(":")[0]?.toLowerCase().trim() ?? "";
 
-  // 1. Subdomain routing: {slug}.buildmora.tech
-  if (host.endsWith(`.${appDomain}`)) {
-    const slug = host.replace(`.${appDomain}`, "").toLowerCase();
+  // 1. Subdomain routing: {slug}.buildmora.tech OR {slug}.localhost
+  // If user visits www.{slug}.buildmora.tech, normalize by stripping leading "www."
+  let normalizedHost = cleanHost;
+  if (normalizedHost.startsWith("www.") && normalizedHost !== `www.${appDomain}`) {
+    normalizedHost = normalizedHost.slice(4);
+  }
 
-    // Skip non-tenant subdomains
-    if (["www", "api", "admin", "dashboard"].includes(slug)) return null;
+  let slug: string | null = null;
+  if (normalizedHost.endsWith(`.${appDomain}`)) {
+    slug = normalizedHost.slice(0, -(appDomain.length + 1));
+  } else if (normalizedHost.endsWith(".localhost") || normalizedHost.includes(".localhost")) {
+    slug = normalizedHost.split(".localhost")[0] ?? null;
+  }
+
+  if (slug) {
+    slug = slug.toLowerCase().trim();
+    // Skip reserved subdomains
+    if (["www", "api", "admin", "dashboard", "app", "super-admin"].includes(slug)) return null;
 
     const cached = getCached(slugCache, slug);
     if (cached) return { tenantId: cached, slug };
@@ -75,16 +88,16 @@ export async function resolveTenant(
   }
 
   // 2. Custom domain fallback
-  const cached = getCached(domainCache, host);
-  if (cached) return { tenantId: cached, slug: host };
+  const cached = getCached(domainCache, cleanHost);
+  if (cached) return { tenantId: cached, slug: cleanHost };
 
   const tenant = await prisma.tenant.findFirst({
-    where: { customDomain: host, customDomainVerified: true, isActive: true },
+    where: { customDomain: cleanHost, customDomainVerified: true, isActive: true },
     select: { id: true, siteSlug: true },
   });
 
   if (!tenant) return null;
-  setCache(domainCache, host, tenant.id);
+  setCache(domainCache, cleanHost, tenant.id);
   return { tenantId: tenant.id, slug: tenant.siteSlug };
 }
 

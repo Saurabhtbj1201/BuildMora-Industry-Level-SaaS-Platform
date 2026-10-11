@@ -51,8 +51,9 @@ export default async function SettingsDashboardPage() {
       // Vercel preview — no wildcard subdomains; show base URL
       publicSiteUrl = appUrl;
     } else {
-      // Custom domain — full subdomain
-      publicSiteUrl = `https://${tenant.siteSlug}.${appUrlObj.hostname}`;
+      // Custom domain — strip www. if present so subdomain is slug.buildmora.tech
+      const apexDomain = appUrlObj.hostname.replace(/^www\./, "");
+      publicSiteUrl = `https://${tenant.siteSlug}.${apexDomain}`;
     }
   } else {
     // Fallback: derive from request host header

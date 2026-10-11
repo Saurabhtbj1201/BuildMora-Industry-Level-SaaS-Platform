@@ -4,7 +4,12 @@ const nextConfig: NextConfig = {
   experimental: {
     // Enable server actions
     serverActions: {
-      allowedOrigins: ["localhost:3000", "*.buildmora.com"],
+      allowedOrigins: [
+        "localhost:3000",
+        "*.buildmora.tech",
+        "www.buildmora.tech",
+        "buildmora.tech",
+      ],
     },
   },
 
@@ -63,13 +68,25 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Redirect www → non-www for marketing site
+  // Redirect apex → www for primary marketing site
   async redirects() {
     return [
       {
         source: "/:path*",
+        has: [{ type: "host", value: "buildmora.tech" }],
+        destination: "https://www.buildmora.tech/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "buildmora.com" }],
+        destination: "https://www.buildmora.tech/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
         has: [{ type: "host", value: "www.buildmora.com" }],
-        destination: "https://buildmora.com/:path*",
+        destination: "https://www.buildmora.tech/:path*",
         permanent: true,
       },
     ];

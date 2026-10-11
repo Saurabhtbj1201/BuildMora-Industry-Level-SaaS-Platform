@@ -14,7 +14,7 @@ const ses = new SESClient({
   },
 });
 
-const FROM_EMAIL = process.env.AWS_SES_FROM_EMAIL ?? "noreply@buildmora.com";
+const FROM_EMAIL = process.env.AWS_SES_FROM_EMAIL ?? "noreply@buildmora.tech";
 const FROM_NAME = process.env.AWS_SES_FROM_NAME ?? "BuildMora";
 const FROM = `${FROM_NAME} <${FROM_EMAIL}>`;
 

@@ -23,12 +23,23 @@ export default async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // ─── 2. Tenant subdomain / custom domain routing ──────────────────────────
+  // ─── 2. Redirect apex domain to www.buildmora.tech ───────────────────────
+  const cleanHost = host.split(":")[0] ?? "";
+  if (cleanHost === "buildmora.tech") {
+    const wwwUrl = new URL(req.url);
+    wwwUrl.hostname = "www.buildmora.tech";
+    wwwUrl.protocol = "https:";
+    return NextResponse.redirect(wwwUrl, { status: 308 });
+  }
+
+  // ─── 3. Tenant subdomain / custom domain routing ──────────────────────────
   const isMarketingDomain =
-    host === APP_DOMAIN ||
-    host === `www.${APP_DOMAIN}` ||
-    host === "localhost:3000" ||
-    host.startsWith("localhost:") ||
+    cleanHost === "www.buildmora.tech" ||
+    cleanHost === "buildmora.tech" ||
+    cleanHost === APP_DOMAIN ||
+    cleanHost === `www.${APP_DOMAIN}` ||
+    cleanHost === "localhost" ||
+    cleanHost.startsWith("localhost") ||
     // Always treat Vercel deployment URL as marketing domain
     (VERCEL_URL !== null && host === VERCEL_URL) ||
     host.endsWith(".vercel.app");
@@ -37,7 +48,7 @@ export default async function proxy(req: NextRequest) {
     const tenant = await resolveTenant(host);
 
     if (!tenant) {
-      return NextResponse.redirect(new URL("/404", `https://${APP_DOMAIN}`));
+      return NextResponse.redirect(new URL("/404", "https://www.buildmora.tech"));
     }
 
     // Rewrite to /site prefix so tenant pages don't conflict with marketing pages
