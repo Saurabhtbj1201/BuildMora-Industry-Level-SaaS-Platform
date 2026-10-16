@@ -62,6 +62,54 @@ export async function sendEmail(options: SendEmailOptions): Promise<void> {
   }
 }
 
+export interface SendHtmlEmailOptions {
+  to: string | string[];
+  subject: string;
+  html: string;
+  text?: string;
+  replyTo?: string;
+}
+
+/**
+ * Send an HTML email via AWS SES directly.
+ */
+export async function sendHtmlEmail(
+  options: SendHtmlEmailOptions
+): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { to, subject, html, text, replyTo } = options;
+  const toAddresses = Array.isArray(to) ? to : [to];
+
+  const plainText =
+    text ??
+    html
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const input: SendEmailCommandInput = {
+    Source: FROM,
+    Destination: { ToAddresses: toAddresses },
+    Message: {
+      Subject: { Data: subject, Charset: "UTF-8" },
+      Body: {
+        Html: { Data: html, Charset: "UTF-8" },
+        Text: { Data: plainText, Charset: "UTF-8" },
+      },
+    },
+    ...(replyTo && { ReplyToAddresses: [replyTo] }),
+  };
+
+  try {
+    const result = await ses.send(new SendEmailCommand(input));
+    return { success: true, messageId: result.MessageId };
+  } catch (error) {
+    const errMessage = error instanceof Error ? error.message : String(error);
+    console.error("[SES] Failed to send email:", { to, subject, error: errMessage });
+    return { success: false, error: errMessage };
+  }
+}
+
 // ─── Convenience helpers ──────────────────────────────────────────────────────
 
 /**

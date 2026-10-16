@@ -18,6 +18,24 @@ export async function PATCH(
   if (adminNotes !== undefined) data.adminNotes = adminNotes;
   if (status === "RESOLVED" || status === "CLOSED") data.resolvedAt = new Date();
 
-  await prisma.supportRequest.update({ where: { id }, data });
-  return NextResponse.json({ success: true });
+  const updated = await prisma.supportRequest.update({
+    where: { id },
+    data,
+    select: { id: true, name: true, email: true, subject: true, status: true, adminNotes: true },
+  });
+
+  // Notify user of status update or admin notes
+  if (status !== undefined || adminNotes !== undefined) {
+    const { sendSupportResolvedNotification } = await import("@/lib/email-service");
+    sendSupportResolvedNotification({
+      ticketId: updated.id,
+      name: updated.name,
+      email: updated.email,
+      subject: updated.subject,
+      status: updated.status,
+      adminNotes: updated.adminNotes,
+    }).catch((err) => console.error("[Email] Support update notification error:", err));
+  }
+
+  return NextResponse.json({ success: true, ticket: updated });
 }

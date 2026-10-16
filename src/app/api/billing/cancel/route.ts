@@ -31,6 +31,16 @@ export async function POST() {
       data:  { cancelAtPeriodEnd: true },
     });
 
+    if (session.user.email) {
+      const { sendBillingCancelledNotification } = await import("@/lib/email-service");
+      sendBillingCancelledNotification({
+        userEmail: session.user.email,
+        userName: session.user.name,
+        plan: tenant.subscription.plan,
+        endDate: tenant.subscription.currentPeriodEnd,
+      }).catch((e) => console.error("[Email] Cancel billing notification error:", e));
+    }
+
     return NextResponse.json({ success: true, cancelAtPeriodEnd: true });
   } catch (err) {
     console.error("[billing/cancel] Razorpay error:", err);

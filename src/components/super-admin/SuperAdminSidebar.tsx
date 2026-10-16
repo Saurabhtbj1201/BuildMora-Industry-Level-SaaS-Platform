@@ -15,15 +15,17 @@ import {
   ShieldAlert,
   ArrowLeftRight,
   ChevronDown,
+  Mail,
 } from "lucide-react";
 
 const NAV = [
-  { label: "Overview",   href: "/super-admin",            icon: LayoutDashboard },
-  { label: "Users",      href: "/super-admin/users",      icon: Users           },
-  { label: "Tenants",    href: "/super-admin/tenants",    icon: Building2       },
-  { label: "Audit Logs", href: "/super-admin/audit-logs", icon: ScrollText      },
-  { label: "Support",    href: "/super-admin/support",    icon: LifeBuoy        },
-  { label: "Settings",   href: "/super-admin/settings",   icon: Settings        },
+  { label: "Overview",       href: "/super-admin",            icon: LayoutDashboard },
+  { label: "Users",          href: "/super-admin/users",      icon: Users           },
+  { label: "Tenants",        href: "/super-admin/tenants",    icon: Building2       },
+  { label: "Broadcast Mail", href: "/super-admin/broadcast",  icon: Mail            },
+  { label: "Audit Logs",     href: "/super-admin/audit-logs", icon: ScrollText      },
+  { label: "Support",        href: "/super-admin/support",    icon: LifeBuoy        },
+  { label: "Settings",       href: "/super-admin/settings",   icon: Settings        },
 ];
 
 interface SuperAdminSidebarProps {

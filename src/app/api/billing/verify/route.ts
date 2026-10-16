@@ -92,5 +92,16 @@ export async function POST(req: NextRequest) {
     }),
   ]);
 
+  if (session.user.email) {
+    const { sendBillingReceiptNotification } = await import("@/lib/email-service");
+    sendBillingReceiptNotification({
+      userEmail: session.user.email,
+      userName: session.user.name,
+      plan,
+      paymentId: razorpay_payment_id,
+      subscriptionId: razorpay_subscription_id,
+    }).catch((err) => console.error("[Email] Billing receipt email error:", err));
+  }
+
   return NextResponse.json({ success: true, plan });
 }

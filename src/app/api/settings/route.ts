@@ -99,5 +99,23 @@ export const PUT = withErrorHandler(async (req: NextRequest) => {
   // Invalidate in-memory caches
   invalidateTenantCache(newSlug, body.customDomain || undefined);
 
+  // Send security email notification for setting changes
+  const changesSummary: string[] = [];
+  if (body.siteName) changesSummary.push(`Site Name: "${body.siteName}"`);
+  if (newSlug) changesSummary.push(`Portfolio Subdomain: "${newSlug}.buildmora.tech"`);
+  if (body.customDomain !== undefined) changesSummary.push(`Custom Domain: "${body.customDomain || "None"}"`);
+  if (body.seoDescription) changesSummary.push("Updated SEO Description & Meta tags");
+  if (body.gaMeasurementId) changesSummary.push("Updated Google Analytics 4 ID");
+
+  if (changesSummary.length > 0 && session.user.email) {
+    const { sendSettingsChangedNotification } = await import("@/lib/email-service");
+    sendSettingsChangedNotification({
+      userEmail: session.user.email,
+      userName: session.user.name,
+      siteName: updatedTenant.siteName,
+      changes: changesSummary,
+    }).catch((err) => console.error("[Email] Settings change notification error:", err));
+  }
+
   return ok({ success: true, tenant: updatedTenant });
 });
